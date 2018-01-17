@@ -1,0 +1,333 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		837FEF82200FAC84006C06EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF81200FAC84006C06EB /* main.cpp */; };
+		837FEF8D200FACB9006C06EB /* libopencv_imgcodecs.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF89200FACB9006C06EB /* libopencv_imgcodecs.3.4.0.dylib */; };
+		837FEF8E200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8A200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib */; };
+		837FEF8F200FACB9006C06EB /* libopencv_core.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8B200FACB9006C06EB /* libopencv_core.3.4.0.dylib */; };
+		837FEF90200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8C200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib */; };
+		837FEF99200FACDC006C06EB /* MTLineRecord.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF95200FACDC006C06EB /* MTLineRecord.cc */; };
+		837FEF9A200FACDC006C06EB /* MTDetector.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF96200FACDC006C06EB /* MTDetector.cc */; };
+		837FEF9B200FACDC006C06EB /* MTDocumentRectangle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		837FEF7C200FAC84006C06EB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		837FEF7E200FAC84006C06EB /* confital-lib-mactest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "confital-lib-mactest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		837FEF81200FAC84006C06EB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		837FEF89200FACB9006C06EB /* libopencv_imgcodecs.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_imgcodecs.3.4.0.dylib; sourceTree = "<group>"; };
+		837FEF8A200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_ximgproc.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_ximgproc.3.4.0.dylib; sourceTree = "<group>"; };
+		837FEF8B200FACB9006C06EB /* libopencv_core.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_core.3.4.0.dylib; sourceTree = "<group>"; };
+		837FEF8C200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_imgproc.3.4.0.dylib; sourceTree = "<group>"; };
+		837FEF91200FACDB006C06EB /* MTConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTConfig.h; path = ../../../src/MTConfig.h; sourceTree = "<group>"; };
+		837FEF92200FACDC006C06EB /* MTLineRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTLineRecord.h; path = ../../../src/MTLineRecord.h; sourceTree = "<group>"; };
+		837FEF93200FACDC006C06EB /* MTDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTDetector.h; path = ../../../src/MTDetector.h; sourceTree = "<group>"; };
+		837FEF94200FACDC006C06EB /* model.yml.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; name = model.yml.gz; path = ../../../src/model.yml.gz; sourceTree = "<group>"; };
+		837FEF95200FACDC006C06EB /* MTLineRecord.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTLineRecord.cc; path = ../../../src/MTLineRecord.cc; sourceTree = "<group>"; };
+		837FEF96200FACDC006C06EB /* MTDetector.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTDetector.cc; path = ../../../src/MTDetector.cc; sourceTree = "<group>"; };
+		837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTDocumentRectangle.cc; path = ../../../src/MTDocumentRectangle.cc; sourceTree = "<group>"; };
+		837FEF98200FACDC006C06EB /* MTDocumentRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTDocumentRectangle.h; path = ../../../src/MTDocumentRectangle.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		837FEF7B200FAC84006C06EB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				837FEF8D200FACB9006C06EB /* libopencv_imgcodecs.3.4.0.dylib in Frameworks */,
+				837FEF8E200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib in Frameworks */,
+				837FEF8F200FACB9006C06EB /* libopencv_core.3.4.0.dylib in Frameworks */,
+				837FEF90200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		837FEF75200FAC84006C06EB = {
+			isa = PBXGroup;
+			children = (
+				837FEF80200FAC84006C06EB /* confital-lib-mactest */,
+				837FEF7F200FAC84006C06EB /* Products */,
+				837FEF88200FACB8006C06EB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		837FEF7F200FAC84006C06EB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				837FEF7E200FAC84006C06EB /* confital-lib-mactest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		837FEF80200FAC84006C06EB /* confital-lib-mactest */ = {
+			isa = PBXGroup;
+			children = (
+				837FEF94200FACDC006C06EB /* model.yml.gz */,
+				837FEF91200FACDB006C06EB /* MTConfig.h */,
+				837FEF96200FACDC006C06EB /* MTDetector.cc */,
+				837FEF93200FACDC006C06EB /* MTDetector.h */,
+				837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */,
+				837FEF98200FACDC006C06EB /* MTDocumentRectangle.h */,
+				837FEF95200FACDC006C06EB /* MTLineRecord.cc */,
+				837FEF92200FACDC006C06EB /* MTLineRecord.h */,
+				837FEF81200FAC84006C06EB /* main.cpp */,
+			);
+			path = "confital-lib-mactest";
+			sourceTree = "<group>";
+		};
+		837FEF88200FACB8006C06EB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				837FEF8B200FACB9006C06EB /* libopencv_core.3.4.0.dylib */,
+				837FEF89200FACB9006C06EB /* libopencv_imgcodecs.3.4.0.dylib */,
+				837FEF8C200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib */,
+				837FEF8A200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		837FEF7D200FAC84006C06EB /* confital-lib-mactest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 837FEF85200FAC84006C06EB /* Build configuration list for PBXNativeTarget "confital-lib-mactest" */;
+			buildPhases = (
+				837FEF7A200FAC84006C06EB /* Sources */,
+				837FEF7B200FAC84006C06EB /* Frameworks */,
+				837FEF7C200FAC84006C06EB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "confital-lib-mactest";
+			productName = "confital-lib-mactest";
+			productReference = 837FEF7E200FAC84006C06EB /* confital-lib-mactest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		837FEF76200FAC84006C06EB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Chris Morgan";
+				TargetAttributes = {
+					837FEF7D200FAC84006C06EB = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 837FEF79200FAC84006C06EB /* Build configuration list for PBXProject "confital-lib-mactest" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 837FEF75200FAC84006C06EB;
+			productRefGroup = 837FEF7F200FAC84006C06EB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				837FEF7D200FAC84006C06EB /* confital-lib-mactest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		837FEF7A200FAC84006C06EB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				837FEF82200FAC84006C06EB /* main.cpp in Sources */,
+				837FEF9A200FACDC006C06EB /* MTDetector.cc in Sources */,
+				837FEF99200FACDC006C06EB /* MTLineRecord.cc in Sources */,
+				837FEF9B200FACDC006C06EB /* MTDocumentRectangle.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		837FEF83200FAC84006C06EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		837FEF84200FAC84006C06EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		837FEF86200FAC84006C06EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_TEMP_DIR = .;
+				DEVELOPMENT_TEAM = SR83H773XU;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/3.4.0_1/lib,
+					/usr/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		837FEF87200FAC84006C06EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SR83H773XU;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/3.4.0_1/lib,
+					/usr/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		837FEF79200FAC84006C06EB /* Build configuration list for PBXProject "confital-lib-mactest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				837FEF83200FAC84006C06EB /* Debug */,
+				837FEF84200FAC84006C06EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		837FEF85200FAC84006C06EB /* Build configuration list for PBXNativeTarget "confital-lib-mactest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				837FEF86200FAC84006C06EB /* Debug */,
+				837FEF87200FAC84006C06EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 837FEF76200FAC84006C06EB /* Project object */;
+}

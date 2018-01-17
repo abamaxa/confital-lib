@@ -1,63 +1,38 @@
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# Prerequisites
+*.d
 
-## Build generated
-build/
-DerivedData/
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
-## Various settings
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata/
+# Precompiled Headers
+*.gch
+*.pch
 
-## Other
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
 
-## Obj-C/Swift specific
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
+# Fortran module files
+*.mod
+*.smod
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
 
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
+# Executables
+*.exe
+*.out
+*.app
 
-Carthage/Build
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-
-# Code Injection
-#
-# After new code Injection tools there's a generated folder /iOSInjectionProject
-# https://github.com/johnno1962/injectionforxcode
-
-iOSInjectionProject/
+.DS_Store
+test/images_saved
+test/images
+test/confital-lib-mactest/DerivedData
+test/confital-lib-mactest/confital-lib-mactest.build
