@@ -81,8 +81,8 @@ void MTDetector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
 
     /*if (scale == 2)
         cv::pyrDown(imgOriginal, m_imgSaved);
-    else
-        cv::resize(imgOriginal, m_imgSaved, cv::Size(), 1. / scale, 1. /scale);*/
+    else */
+    //cv::resize(imgOriginal, m_imgSaved, cv::Size(), 1. / scale, 1. /scale);
     
     m_width = m_imgSaved.cols;
     m_height = m_imgSaved.rows;
@@ -115,7 +115,16 @@ void MTDetector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
     }
     else {
 #ifdef DEBUG_DRAWING
-        cv::resize(m_imgSaved, imgOriginal, cv::Size(), scale,scale);
+        //cv::resize(m_imgSaved, imgOriginal, cv::Size(), scale,scale);
+        for (int i = 0;i < rescales;i++) {
+            if (i) {
+                cv::pyrUp(imgOriginal, imgOriginal);
+            }
+            else {
+                cv::pyrUp(m_imgSaved, imgOriginal);
+            }
+        }
+        cv::cvtColor(imgOriginal, imgOriginal, CV_RGB2BGR);
 #else
         imgOriginal.copyTo(m_imgSaved);
 #endif
