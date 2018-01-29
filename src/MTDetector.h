@@ -29,6 +29,8 @@ public:
     void processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod);
 
     bool getDocumentImage(cv::Mat& image);
+    bool getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage);
+    
     void getDocumentPoints(std::vector<cv::Point>& points) const;
     void reset();
     
@@ -43,7 +45,7 @@ private:
 
     int findBestRectangleIndex(std::vector<DocumentRectangle>& rectangles) const;
 
-    void detectRectange
+    void detectRectangle
     (
         const LineRecordVector& selectedCandidates,
         std::vector<DocumentRectangle>& rectangles

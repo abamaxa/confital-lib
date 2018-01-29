@@ -55,6 +55,24 @@ bool MTDetector::getDocumentImage(cv::Mat& image) {
     }
 }
 
+bool MTDetector::getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage) {
+    if (m_documentDetected || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
+        cv::Mat resized;
+        
+        // Scale
+        m_lastRect.rescale(srcImage);
+        m_lastRect.copyDeskewedDocument(srcImage, resized);
+        
+        cv::Size orig_size(srcImage.cols, srcImage.rows);
+        
+        cv::resize(resized, destImage, orig_size, 0, 0, cv::INTER_LANCZOS4);
+        return true;
+    } else {
+        destImage = srcImage;
+        return false;
+    }
+}
+
 void MTDetector::getDocumentPoints(std::vector<cv::Point>& points) const {
     m_lastRect.getPoints(points);
 }
@@ -257,7 +275,7 @@ void MTDetector::analyseLines(LineRecordVector& lineCandidates, std::vector<Docu
         }
     }
 
-    detectRectange(selectedCandidates, rectangles);
+    detectRectangle(selectedCandidates, rectangles);
 
 #ifdef DEBUG_DRAWING
     if (findBestRectangleIndex(rectangles) == -1) {
@@ -281,7 +299,7 @@ int MTDetector::findBestRectangleIndex(std::vector<DocumentRectangle>& rectangle
     return bestOrdinal;
 }
 
-void MTDetector::detectRectange(const LineRecordVector& selectedCandidates, std::vector<DocumentRectangle>& rectangles) const
+void MTDetector::detectRectangle(const LineRecordVector& selectedCandidates, std::vector<DocumentRectangle>& rectangles) const
 {
     for (LineRecordVector::const_iterator itr = selectedCandidates.begin();
           itr != selectedCandidates.end();++itr)
