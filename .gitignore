@@ -33,6 +33,6 @@
 
 .DS_Store
 test/images_saved
-test/images
 test/confital-lib-mactest/DerivedData
 test/confital-lib-mactest/confital-lib-mactest.build
+DerivedData

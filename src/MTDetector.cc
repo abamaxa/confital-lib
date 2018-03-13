@@ -169,9 +169,9 @@ void MTDetector::edgeDetectCanny(cv::Mat& imgResult) {
 void MTDetector::edgeDetectStructuredForest(cv::Mat& imgResult) {
     cv::Mat imgTemp, image_CV_32FC3;
 
-    //cv::medianBlur(m_imgSaved, imgTemp, 11);
-    //cv::cvtColor(imgTemp, imgTemp, CV_BGR2RGB);
-    cv::cvtColor(m_imgSaved, imgTemp, CV_BGR2RGB);
+    cv::medianBlur(m_imgSaved, imgTemp, 11);
+    cv::cvtColor(imgTemp, imgTemp, CV_BGR2RGB);
+    //cv::cvtColor(m_imgSaved, imgTemp, CV_BGR2RGB);
     
     imgTemp.convertTo(image_CV_32FC3, CV_32FC3, 1/255.0);
     imgResult = cv::Mat(image_CV_32FC3.size(), image_CV_32FC3.type());
