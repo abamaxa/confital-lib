@@ -15,7 +15,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "constants.hpp"
+#include "constants.h"
 
 typedef std::vector<cv::Point> Points;
 

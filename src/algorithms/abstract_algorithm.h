@@ -13,7 +13,7 @@
 
 class AbstractAlgorithm {
 public:
-    virtual bool apply(PipelineJob& job);
+    virtual void apply(PipelineJob& job) = 0;
 };
 
 #endif /* abstract_algorithm_h */

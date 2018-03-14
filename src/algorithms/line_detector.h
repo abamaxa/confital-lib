@@ -8,11 +8,9 @@
 #include "line.h"
 #include "abstract_algorithm.h"
 
-class LineDetector {
+class LineDetector : public AbstractAlgorithm {
 public:
-    //LineDetector(const PipelineJob& job, size_t max_lines);
-    //void apply(cv::Mat& image);
-    virtual bool apply(PipelineJob& job);
+    virtual void apply(PipelineJob& job);
     
 private :
     void find_hough_lines(PipelineJob& job);

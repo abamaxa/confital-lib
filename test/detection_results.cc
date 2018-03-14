@@ -6,7 +6,7 @@
 //  Copyright © 2018 Chris Morgan. All rights reserved.
 //
 
-#include "detection_results.hpp"
+#include "detection_results.h"
 
 
 DetectionResult::DetectionResult(const char* _name, const Points& _points) :

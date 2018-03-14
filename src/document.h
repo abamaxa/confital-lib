@@ -28,6 +28,7 @@ public:
     void copyDeskewedDocument(const cv::Mat& image, cv::Mat& output) const;
 
     float getScore() const;
+    bool is_valid() const;
 
     cv::Point m_bottom_left;
     cv::Point m_bottom_right;
@@ -45,6 +46,7 @@ public:
     bool m_vertical_doc;
     bool m_horizontal_doc;
     bool m_camera_orientated;
+    bool is_probably_doc;
 
 private:
     bool calculateScores(const Line** sides);

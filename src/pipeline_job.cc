@@ -4,7 +4,7 @@
 #include "pipeline_job.h"
 
 PipelineJob::PipelineJob(cv::Mat& _image)
-: image(_image)
+: image(_image), initial_image(_image)
 {
     
 }
@@ -25,4 +25,28 @@ void PipelineJob::add_line(const Line& line) {
     if (!line.is_similar_line(line_candidates, image_width(), image_height())) {
         line_candidates.push_back(line);
     }
+}
+
+LineVector& PipelineJob::get_lines() {
+    return line_candidates;
+}
+
+cv::Mat& PipelineJob::get_initial_image() {
+    return initial_image;
+}
+
+void PipelineJob::add_rectangle(Document rectangle) {
+    rectangles.push_back(rectangle);
+}
+
+std::vector<Document>& PipelineJob::get_rectangles() {
+    return rectangles;
+}
+
+void PipelineJob::set_result(const Document& rectangle) {
+    result_rectangle = rectangle;
+}
+
+const Document& PipelineJob::get_result() const {
+    return result_rectangle;
 }

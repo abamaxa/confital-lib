@@ -31,32 +31,18 @@ public:
     void reset();
     
 private:
-    void edgeDetectCanny(cv::Mat& imgResult);
-    void edgeDetectStructuredForest(cv::Mat& imgResult);
-
-    void findHoughLines(cv::Mat& edgesNMS, size_t maxLines);
-    void findHoughPLines(cv::Mat& edgesNMS, size_t maxLines);
-
-    void analyseLines();
-
-    int findBestRectangleIndex() const;
-
-    void detectRectangle();
-
-    void debugDrawResults(cv::Mat& image) const;
+    void calculate_rescale_factor(cv::Mat& imgOriginal);
+    void scale_image(cv::Mat& imgOriginal);
+    void rescale_image(cv::Mat& imgOriginal);
+    void update_detection_state(const Document& rectangle);
 
     cv::Ptr<cv::ximgproc::StructuredEdgeDetection> m_dollar;
     int m_frames;
-    int m_width;
-    int m_height;
     cv::Mat m_imgSaved;
     Document m_lastRect;
     bool m_documentDetected;
     int m_framesSinceDocDetected;
-    
-    LineVector lineCandidates;
-    LineVector selectedCandidates;
-    std::vector<Document> rectangles;
+    int rescale_factor;
 };
 
 #endif /* Detector_h */

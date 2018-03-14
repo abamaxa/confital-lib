@@ -13,14 +13,26 @@ public:
     
     int image_width() const;
     int image_height() const;
+    
     cv::Mat& get_image();
+    cv::Mat& get_initial_image();
+    
+    LineVector& get_lines();
     void add_line(const Line& line);
     
-    LineVector line_candidates;
-private:
-    cv::Mat& image;
+    std::vector<Document>& get_rectangles();
+    void add_rectangle(Document rectangle);
     
-    LineVector selected_candidates;
+    void set_result(const Document& rectangle);
+    const Document& get_result() const;
+    
+private:
+    cv::Mat& initial_image;
+    cv::Mat image;
+    
+    Document result_rectangle;
+    
+    LineVector line_candidates;
     std::vector<Document> rectangles;
 };
 

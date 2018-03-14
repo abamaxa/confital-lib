@@ -22,10 +22,9 @@
  */
 
 
-bool LineDetector::apply(PipelineJob& job)
+void LineDetector::apply(PipelineJob& job)
 {
     find_hough_lines(job);
-    return true;
 }
 
 void LineDetector::find_hough_lines(PipelineJob& job)

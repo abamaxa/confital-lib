@@ -9,9 +9,9 @@
 // Example showing how to read and write images
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
-#include "detection_results.hpp"
+#include "detection_results.h"
 #include "detector.h"
-#include "constants.hpp"
+#include "constants.h"
 
 //#define DETECTION_MODE MT_EDGE_DETECT_TREES
 #define DETECTION_MODE MT_EDGE_DETECT_CANNY

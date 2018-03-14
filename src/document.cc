@@ -24,7 +24,8 @@ Document::Document() :
     m_camera_orientated(false),
     m_image_width(0),
     m_image_height(0),
-    m_minArea(0)
+    m_minArea(0),
+    is_probably_doc(false)
 {
 }
 
@@ -35,7 +36,8 @@ Document::Document(const cv::Mat& image) :
     m_area_ratio(0.0),
     m_vertical_doc(false),
     m_horizontal_doc(false),
-    m_camera_orientated(false)
+    m_camera_orientated(false),
+    is_probably_doc(false)
 {
     m_image_width = image.cols;
     m_image_height = image.rows;
@@ -56,7 +58,8 @@ Document::Document(const Document& toCopy) :
     m_top_left(toCopy.m_top_left),
     m_image_width(toCopy.m_image_width),
     m_image_height(toCopy.m_image_height),
-    m_minArea(toCopy.m_minArea)
+    m_minArea(toCopy.m_minArea),
+    is_probably_doc(toCopy.is_probably_doc)
 {
 
 }
@@ -72,7 +75,7 @@ void Document::reset() {
     
     m_bottom_left = m_bottom_right = m_top_right = m_top_left = cv::Point();
     
-    
+    is_probably_doc = false;
 }
 
 bool Document::assessRectangle(
@@ -91,7 +94,7 @@ bool Document::assessRectangle(
     lines[1]->find_intersection(*lines[3], m_top_right);
     lines[1]->find_intersection(*lines[2], m_top_left);
 
-    bool is_probably_doc = calculateScores(lines);
+    is_probably_doc = calculateScores(lines);
 
     if (is_probably_doc) {
         calculateHistogramRatios(image);
@@ -102,6 +105,10 @@ bool Document::assessRectangle(
         }
     }
 
+    return is_probably_doc;
+}
+
+bool Document::is_valid() const {
     return is_probably_doc;
 }
 
