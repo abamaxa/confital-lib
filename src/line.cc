@@ -2,7 +2,7 @@
 #ifdef __cplusplus
 #import <opencv2/opencv.hpp>
 #import <cmath>
-#import "MTDocumentRectangle.h"
+#import "document.h"
 
 #endif
 
@@ -13,12 +13,12 @@
 #define ABS(a)              ((a) >= 0 ? (a) : (-(a)))
 #define ROUND(a)            ((SIGN(a)) * ( ( int )( ABS(a) + 0.5 ) ) )
 
-SideRecord::SideRecord(const LineRecord& _lineRecord, float _angle, cv::Point _intersection)
-: lineRecord(_lineRecord), angle(_angle), intersection(_intersection)
+SideRecord::SideRecord(const Line& _lineRecord, float _angle)
+: lineRecord(_lineRecord), angle(_angle)
 {}
 
 SideRecord::SideRecord(const SideRecord& copy)
-: lineRecord(copy.lineRecord), angle(copy.angle), intersection(copy.intersection)
+: lineRecord(copy.lineRecord), angle(copy.angle)
 {}
 
 SideRecord& SideRecord::operator=(const SideRecord& copy) {
@@ -27,26 +27,25 @@ SideRecord& SideRecord::operator=(const SideRecord& copy) {
     lineRecord.m_angle = copy.lineRecord.m_angle;
     
     angle = copy.angle;
-    intersection = copy.intersection;
     return *this;
 }
 
-LineRecord::LineRecord(const cv::Point& _pt1, const cv::Point& _pt2, double _angle)
+Line::Line(const cv::Point& _pt1, const cv::Point& _pt2, double _angle)
     : m_pt1(_pt1), m_pt2(_pt2), m_angle(_angle)
 {
 
 }
 
-bool LineRecord::isSimilarLine(const LineRecordVector& lineCandidates, int image_width, int image_height) const
+bool Line::is_similar_line(const LineVector& lineCandidates, int image_width, int image_height) const
 {
     bool similar = false;
-    for (LineRecordVector::const_iterator itr = lineCandidates.begin();
+    for (LineVector::const_iterator itr = lineCandidates.begin();
          itr != lineCandidates.end(); ++itr)
     {
-        const LineRecord& lineRecord = *(itr);
+        const Line& lineRecord = *(itr);
         cv::Point intersection;
 
-        bool did_intersect = findLinesIntersectionPoint(lineRecord, intersection);
+        bool did_intersect = find_intersection(lineRecord, intersection);
         if (did_intersect) {
             float angle = fabs(m_angle - lineRecord.m_angle);
             bool isSimilarGrad = (angle < M_PI * 0.1 || angle > M_PI * 0.9);
@@ -65,7 +64,7 @@ bool LineRecord::isSimilarLine(const LineRecordVector& lineCandidates, int image
     return similar;
 }
 
-LineRecord::LineRecord(float rho, float theta) {
+Line::Line(float rho, float theta) {
     m_angle = theta;
 
     float a = cos(theta);
@@ -87,7 +86,7 @@ LineRecord::LineRecord(float rho, float theta) {
     }
 }
 
-LineRecord::LineRecord(int x1, int y1, int x2, int y2, int width, int height)
+Line::Line(int x1, int y1, int x2, int y2, int width, int height)
 {
     // !!! divide by zero
     if (x1 == x2)  {
@@ -119,7 +118,7 @@ LineRecord::LineRecord(int x1, int y1, int x2, int y2, int width, int height)
     }
 }
 
-bool LineRecord::findLinesIntersectionPoint(const LineRecord& l2, cv::Point& result) const
+bool Line::find_intersection(const Line& l2, cv::Point& result) const
 {
     const cv::Point&  p  = m_pt1;
     cv::Point   dp;
@@ -148,11 +147,11 @@ bool LineRecord::findLinesIntersectionPoint(const LineRecord& l2, cv::Point& res
     return true;
  }
 
-void LineRecord::draw(cv::Mat& image, const cv::Scalar& color) const {
+void Line::draw(cv::Mat& image, const cv::Scalar& color) const {
     cv::line(image, m_pt1, m_pt2, color);
 }
 
-void LineRecord::debugDraw(cv::Mat& image) const {
+void Line::debugDraw(cv::Mat& image) const {
     int intensity = 127;
     if (m_parallelSides.size() && m_normalSides.size() > 1) {
         intensity = 255;

@@ -1,19 +1,15 @@
-//
-//  MTDetector.m
-//
 //  Created by Chris Morgan on 22/12/17.
 //  Copyright © 2017 Chris Morgan. All rights reserved.
-//
 
 #ifdef __cplusplus
 #import <cmath>
 #import <algorithm>
 
-#import "MTDetector.h"
+#import "detector.h"
 
 //typedef std::vector<cv::Point> PointVector;
 
-MTDetector::MTDetector() :
+Detector::Detector() :
     m_frames(0),
     m_width(0),
     m_height(0),
@@ -23,7 +19,7 @@ MTDetector::MTDetector() :
 
 }
 
-void MTDetector::reset() {
+void Detector::reset() {
     m_frames = 0;
     m_width = 0;
     m_height = 0;
@@ -31,9 +27,13 @@ void MTDetector::reset() {
     m_framesSinceDocDetected = 1000;
 
     m_lastRect.reset();
+    
+    lineCandidates.clear();
+    selectedCandidates.clear();
+    rectangles.clear();
 }
 
-bool MTDetector::initialize(cv::String pathToModel)
+bool Detector::initialize(cv::String pathToModel)
 {
     //NSString* modelFilename = [[NSBundle mainBundle] pathForResource:@"model.yml" ofType:@"gz"];
     //cv::String modelFilenameStr = std::string([modelFilename UTF8String]);
@@ -41,7 +41,7 @@ bool MTDetector::initialize(cv::String pathToModel)
     return true;
 }
 
-bool MTDetector::getDocumentImage(cv::Mat& image) {
+bool Detector::getDocumentImage(cv::Mat& image) {
     if (m_documentDetected || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
         cv::Mat resized;
 
@@ -55,7 +55,7 @@ bool MTDetector::getDocumentImage(cv::Mat& image) {
     }
 }
 
-bool MTDetector::getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage) {
+bool Detector::getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage) {
     if (m_documentDetected || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
         cv::Mat resized;
         
@@ -73,13 +73,12 @@ bool MTDetector::getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage) {
     }
 }
 
-void MTDetector::getDocumentPoints(std::vector<cv::Point>& points) const {
+void Detector::getDocumentPoints(std::vector<cv::Point>& points) const {
     m_lastRect.getPoints(points);
 }
 
-void MTDetector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
+void Detector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
 {
-    std::vector<DocumentRectangle> rectangles;
     cv::Mat imgResult;
 
     m_frames++;
@@ -118,9 +117,17 @@ void MTDetector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
             break;
     }
 
-    findHoughLines(imgResult, 16, rectangles);
-
-    int bestRectangleIndex = findBestRectangleIndex(rectangles);
+    findHoughLines(imgResult, 16);
+    analyseLines();
+    detectRectangle();
+    
+#ifdef DEBUG_DRAWING
+    if (findBestRectangleIndex() == -1) {
+        debugDrawResults(m_imgSaved);
+    }
+#endif
+    
+    int bestRectangleIndex = findBestRectangleIndex();
     if (bestRectangleIndex != -1 || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
         imgOriginal.copyTo(m_imgSaved);
         if (bestRectangleIndex != -1) {
@@ -158,7 +165,7 @@ void MTDetector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
     }
 }
 
-void MTDetector::edgeDetectCanny(cv::Mat& imgResult) {
+void Detector::edgeDetectCanny(cv::Mat& imgResult) {
     cv::Mat image_gray;
 
     cv::cvtColor(m_imgSaved, image_gray, CV_BGR2GRAY);
@@ -166,7 +173,7 @@ void MTDetector::edgeDetectCanny(cv::Mat& imgResult) {
     cv::Canny(image_gray, imgResult, 75, 200);
 }
 
-void MTDetector::edgeDetectStructuredForest(cv::Mat& imgResult) {
+void Detector::edgeDetectStructuredForest(cv::Mat& imgResult) {
     cv::Mat imgTemp, image_CV_32FC3;
 
     cv::medianBlur(m_imgSaved, imgTemp, 11);
@@ -190,10 +197,9 @@ void MTDetector::edgeDetectStructuredForest(cv::Mat& imgResult) {
     edge_nms.convertTo(imgResult, CV_8UC1, 255.);
 }
 
-void MTDetector::findHoughLines(cv::Mat& edgesNMS, size_t maxLines, std::vector<DocumentRectangle>& rectangles)
+void Detector::findHoughLines(cv::Mat& edgesNMS, size_t maxLines)
 {
     std::vector<cv::Vec2f> lines;
-    LineRecordVector lineCandidates;
 
     cv::HoughLines(edgesNMS, lines, 1, M_PI/180, 10);
     size_t num_to_check = std::min(maxLines, lines.size());
@@ -202,20 +208,17 @@ void MTDetector::findHoughLines(cv::Mat& edgesNMS, size_t maxLines, std::vector<
         float rho = lines[i][0];
         float theta = lines[i][1];
 
-        LineRecord lineRecord = LineRecord(rho, theta);
+        Line lineRecord = Line(rho, theta);
 
-        if (!lineRecord.isSimilarLine(lineCandidates, m_width, m_height)) {
+        if (!lineRecord.is_similar_line(lineCandidates, m_width, m_height)) {
             lineCandidates.push_back(lineRecord);
         }
     }
-
-    analyseLines(lineCandidates, rectangles);
 }
 
-void MTDetector::findHoughPLines(cv::Mat& edgesNMS, size_t maxLines, std::vector<DocumentRectangle>& rectangles)
+void Detector::findHoughPLines(cv::Mat& edgesNMS, size_t maxLines)
 {
     std::vector<cv::Vec4i> lines;
-    LineRecordVector lineCandidates;
     int minDim = std::min(m_height, m_width);
 
     cv::HoughLinesP(edgesNMS, lines, 1, M_PI/180., 10, minDim / 10, minDim / 5);
@@ -223,29 +226,25 @@ void MTDetector::findHoughPLines(cv::Mat& edgesNMS, size_t maxLines, std::vector
     size_t num_to_check = std::min(maxLines, lines.size());
 
     for (size_t i = 0;i < num_to_check;++i)  {
-        LineRecord lineRecord = LineRecord(lines[i][0], lines[i][1], lines[i][2], lines[i][3], m_width, m_height);
+        Line lineRecord = Line(lines[i][0], lines[i][1], lines[i][2], lines[i][3], m_width, m_height);
 
-        if (!lineRecord.isSimilarLine(lineCandidates, m_width, m_height)) {
+        if (!lineRecord.is_similar_line(lineCandidates, m_width, m_height)) {
             lineCandidates.push_back(lineRecord);
         }
     }
-
-    analyseLines(lineCandidates, rectangles);
 }
 
-
-void MTDetector::analyseLines(LineRecordVector& lineCandidates, std::vector<DocumentRectangle>& rectangles)
+void Detector::analyseLines()
 {
-    LineRecordVector selectedCandidates;
     int counter = 0;
-    for (LineRecordVector::iterator itr = lineCandidates.begin();
+    for (LineVector::iterator itr = lineCandidates.begin();
         itr != lineCandidates.end();++itr)
     {
-        LineRecord& lineRecord = *(itr);
+        Line& lineRecord = *(itr);
 
         for (int i = counter;i < lineCandidates.size();++i)
         {
-            LineRecord& lineRecord2 = lineCandidates[i];
+            Line& lineRecord2 = lineCandidates[i];
             // Default values match lines that do not intersect.
             if (&lineRecord2 == &lineRecord) {
                 continue;
@@ -254,19 +253,12 @@ void MTDetector::analyseLines(LineRecordVector& lineCandidates, std::vector<Docu
             float angle = fabs(lineRecord.m_angle - lineRecord2.m_angle);
             bool isSimilarGrad = (angle < M_PI * 0.1 || angle > M_PI * 0.9);
             bool isApproxNormal = (angle < M_PI * 0.6 && angle > M_PI * 0.4);
-            cv::Point intersection;
-            /*bool intersectInImage = false;
-
-            if (lineRecord.findLinesIntersectionPoint(lineRecord2, intersection)) {
-                intersectInImage = ((intersection.x >= 0 || intersection.x <= m_width) &&
-                   (intersection.y >= 0 || intersection.y <= m_height));
-            }*/
-
+            
             if (isSimilarGrad) {
-                lineRecord.m_parallelSides.push_back(SideRecord(lineRecord2, angle, intersection));
+                lineRecord.m_parallelSides.push_back(SideRecord(lineRecord2, angle));
             }
             else if (isApproxNormal) {
-                lineRecord.m_normalSides.push_back(SideRecord(lineRecord2, angle, intersection));
+                lineRecord.m_normalSides.push_back(SideRecord(lineRecord2, angle));
             }
         }
 
@@ -274,17 +266,9 @@ void MTDetector::analyseLines(LineRecordVector& lineCandidates, std::vector<Docu
             selectedCandidates.push_back(lineRecord);
         }
     }
-
-    detectRectangle(selectedCandidates, rectangles);
-
-#ifdef DEBUG_DRAWING
-    if (findBestRectangleIndex(rectangles) == -1) {
-        debugDrawResults(m_imgSaved, rectangles, lineCandidates, selectedCandidates);
-    }
-#endif
 }
 
-int MTDetector::findBestRectangleIndex(std::vector<DocumentRectangle>& rectangles) const {
+int Detector::findBestRectangleIndex() const {
     float bestScore = 0.0;
     int bestOrdinal = -1;
 
@@ -299,12 +283,12 @@ int MTDetector::findBestRectangleIndex(std::vector<DocumentRectangle>& rectangle
     return bestOrdinal;
 }
 
-void MTDetector::detectRectangle(const LineRecordVector& selectedCandidates, std::vector<DocumentRectangle>& rectangles) const
+void Detector::detectRectangle()
 {
-    for (LineRecordVector::const_iterator itr = selectedCandidates.begin();
+    for (LineVector::const_iterator itr = selectedCandidates.begin();
           itr != selectedCandidates.end();++itr)
     {
-        const LineRecord& lineRecord = *(itr);
+        const Line& lineRecord = *(itr);
         /* Iterate through possible sides and make combinations of
         one side with appprox same gradiant and two normals.
         Select using approx equal sides.
@@ -317,22 +301,22 @@ void MTDetector::detectRectangle(const LineRecordVector& selectedCandidates, std
               pitr != lineRecord.m_parallelSides.end();++pitr)
         {
             const SideRecord& oppositeSide = *(pitr);
-            const LineRecord& pRecord = oppositeSide.lineRecord;
+            const Line& pRecord = oppositeSide.lineRecord;
             for (size_t i = 0;i < lineRecord.m_normalSides.size() - 1;++i)
             {
                 const SideRecord& adjSide1 = lineRecord.m_normalSides[i];
-                const LineRecord& nRecord = adjSide1.lineRecord;
+                const Line& nRecord = adjSide1.lineRecord;
 
                 for (size_t n = 1;n < lineRecord.m_normalSides.size();++n)
                 {
                     const SideRecord& adjSide2 = lineRecord.m_normalSides[n];
-                    const LineRecord& nRecord2 = adjSide2.lineRecord;
+                    const Line& nRecord2 = adjSide2.lineRecord;
 
                     if (&nRecord == &nRecord2) {
                         continue;
                     }
 
-                    DocumentRectangle rectangle(m_imgSaved);
+                    Document rectangle(m_imgSaved);
                     bool possible_document = rectangle.assessRectangle(
                                         lineRecord, nRecord, pRecord, nRecord2, m_imgSaved);
 
@@ -347,13 +331,7 @@ void MTDetector::detectRectangle(const LineRecordVector& selectedCandidates, std
     }
 }
 
-void MTDetector::debugDrawResults
-(
-    cv::Mat& image,
-    const std::vector<DocumentRectangle>& rectangles,
-    const LineRecordVector& lineCandidates,
-    const LineRecordVector& selectedCandidates
-) const
+void Detector::debugDrawResults(cv::Mat& image) const
 {
     int counter = 0;
     if (rectangles.size()) {

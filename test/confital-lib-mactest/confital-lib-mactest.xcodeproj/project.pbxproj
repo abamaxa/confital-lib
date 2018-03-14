@@ -12,9 +12,7 @@
 		837FEF8E200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8A200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib */; };
 		837FEF8F200FACB9006C06EB /* libopencv_core.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8B200FACB9006C06EB /* libopencv_core.3.4.0.dylib */; };
 		837FEF90200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 837FEF8C200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib */; };
-		837FEF99200FACDC006C06EB /* MTLineRecord.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF95200FACDC006C06EB /* MTLineRecord.cc */; };
-		837FEF9A200FACDC006C06EB /* MTDetector.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF96200FACDC006C06EB /* MTDetector.cc */; };
-		837FEF9B200FACDC006C06EB /* MTDocumentRectangle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */; };
+		8382250B20591FC0001B85F6 /* detection_results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8382250920591FC0001B85F6 /* detection_results.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,13 +34,9 @@
 		837FEF8A200FACB9006C06EB /* libopencv_ximgproc.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_ximgproc.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_ximgproc.3.4.0.dylib; sourceTree = "<group>"; };
 		837FEF8B200FACB9006C06EB /* libopencv_core.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_core.3.4.0.dylib; sourceTree = "<group>"; };
 		837FEF8C200FACB9006C06EB /* libopencv_imgproc.3.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.4.0.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.0_1/lib/libopencv_imgproc.3.4.0.dylib; sourceTree = "<group>"; };
-		837FEF91200FACDB006C06EB /* MTConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTConfig.h; path = ../../../src/MTConfig.h; sourceTree = "<group>"; };
-		837FEF92200FACDC006C06EB /* MTLineRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTLineRecord.h; path = ../../../src/MTLineRecord.h; sourceTree = "<group>"; };
-		837FEF93200FACDC006C06EB /* MTDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTDetector.h; path = ../../../src/MTDetector.h; sourceTree = "<group>"; };
-		837FEF95200FACDC006C06EB /* MTLineRecord.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTLineRecord.cc; path = ../../../src/MTLineRecord.cc; sourceTree = "<group>"; };
-		837FEF96200FACDC006C06EB /* MTDetector.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTDetector.cc; path = ../../../src/MTDetector.cc; sourceTree = "<group>"; };
-		837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTDocumentRectangle.cc; path = ../../../src/MTDocumentRectangle.cc; sourceTree = "<group>"; };
-		837FEF98200FACDC006C06EB /* MTDocumentRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTDocumentRectangle.h; path = ../../../src/MTDocumentRectangle.h; sourceTree = "<group>"; };
+		8382250920591FC0001B85F6 /* detection_results.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = detection_results.cpp; sourceTree = "<group>"; };
+		8382250A20591FC0001B85F6 /* detection_results.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = detection_results.hpp; sourceTree = "<group>"; };
+		8382250C20592047001B85F6 /* constants.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = constants.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,14 +74,10 @@
 		837FEF80200FAC84006C06EB /* confital-lib-mactest */ = {
 			isa = PBXGroup;
 			children = (
-				837FEF91200FACDB006C06EB /* MTConfig.h */,
-				837FEF96200FACDC006C06EB /* MTDetector.cc */,
-				837FEF93200FACDC006C06EB /* MTDetector.h */,
-				837FEF97200FACDC006C06EB /* MTDocumentRectangle.cc */,
-				837FEF98200FACDC006C06EB /* MTDocumentRectangle.h */,
-				837FEF95200FACDC006C06EB /* MTLineRecord.cc */,
-				837FEF92200FACDC006C06EB /* MTLineRecord.h */,
 				837FEF81200FAC84006C06EB /* main.cpp */,
+				8382250920591FC0001B85F6 /* detection_results.cpp */,
+				8382250A20591FC0001B85F6 /* detection_results.hpp */,
+				8382250C20592047001B85F6 /* constants.hpp */,
 			);
 			path = "confital-lib-mactest";
 			sourceTree = "<group>";
@@ -160,10 +150,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8382250B20591FC0001B85F6 /* detection_results.cpp in Sources */,
 				837FEF82200FAC84006C06EB /* main.cpp in Sources */,
-				837FEF9A200FACDC006C06EB /* MTDetector.cc in Sources */,
-				837FEF99200FACDC006C06EB /* MTLineRecord.cc in Sources */,
-				837FEF9B200FACDC006C06EB /* MTDocumentRectangle.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,7 +270,6 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/opencv/3.4.0_1/lib,
 					/usr/local/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -297,7 +284,6 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/opencv/3.4.0_1/lib,
 					/usr/local/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

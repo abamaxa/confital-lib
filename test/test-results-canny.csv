@@ -1,0 +1,9 @@
+74,138,316,124,296,500,62,488,messed.png
+78,190,390,190,446,638,30,644,skewed-nolines.png
+56,180,376,180,430,628,16,642,skewed-nolines2.png
+12,152,346,142,420,606,-14,636,skewed-failed-to-detect-edge.png
+88,190,400,196,454,640,40,646,skewed1.png
+58,202,366,190,422,636,50,656,table-detect-half-page.png
+32,212,320,182,420,586,62,636,table-failed-to-detect.png
+40,216,328,192,422,598,62,650,table-failed-to-detect2.png
+38,258,298,222,426,552,98,634,table-no-detect3.png

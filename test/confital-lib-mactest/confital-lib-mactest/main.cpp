@@ -9,137 +9,12 @@
 // Example showing how to read and write images
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <cstdlib>
-#include "MTDetector.h"
+#include "detection_results.hpp"
+#include "detector.h"
+#include "constants.hpp"
 
-#define DETECTION_MODE MT_EDGE_DETECT_TREES
-//#define DETECTION_MODE MT_EDGE_DETECT_CANNY
-
-const char* IMAGE_PATHS[] = {
-    "messed.png",
-    "skewed-nolines.png",
-    "skewed-nolines2.png",
-    "skewed-failed-to-detect-edge.png",
-    "skewed1.png",
-    "table-detect-half-page.png",
-    "table-failed-to-detect.png",
-    "table-failed-to-detect2.png",
-    "table-no-detect3.png"
-};
-
-const size_t NUM_IMAGES = sizeof(IMAGE_PATHS) / sizeof(const char*);
-const char* IMAGE_DIR = "../../../../../test/images";
-const char* SAVED_DIR = "../../../../../test/images_saved";
-const char* MODEL_FILE = "../../../../../src/model.yml.gz";
-const int MAX_DIFFERENCE_BETWEEN_POINTS = 10;
-
-const char* RESULTS_FILE_NAME = "../../../../../test-results-canny.csv";
-
-typedef std::vector<cv::Point> Points;
-
-class DetectionResult {
-public:
-    DetectionResult(const char* _name, const Points& _points) :
-        name(_name), points(_points) {}
-    
-    DetectionResult(std::ifstream& stream) {
-        std::string x;
-        std::string y;
-        
-        for (int i = 0;i < 4;i++) {
-            std::getline(stream, x, ',');
-            std::getline(stream, y, ',');
-            if (stream.eof())
-                return;
-        
-            add_point(x, y);
-        }
-        
-        std::getline(stream, name);
-    }
-    
-    bool compare(const Points& test_points) const {
-        //if (test_points.size() != points.size())
-         //   return false;
-        
-        for (int i = 0;i < points.size();i++) {
-            if (!points_identical(test_points[i], points[i]))
-                return false;
-        }
-        
-        return true;
-    }
-    
-    void overwrite_points(const Points& new_points) {
-        points = new_points;
-    }
-    
-    void write(std::ostream& out) {
-        for (int i = 0;i < points.size();i++) {
-            out << points[i].x << "," << points[i].y << ",";
-        }
-        
-        out << name << "\n";
-    }
-    
-    bool is_valid() const {
-        return (points.size() == 4 && name.size() != 0);
-    }
-    
-private :
-    bool points_identical(const cv::Point& point1, const cv::Point& point2) const {
-        if (abs(point1.x - point2.x) > MAX_DIFFERENCE_BETWEEN_POINTS)
-            return false;
-        
-        if (abs(point1.y - point2.y) > MAX_DIFFERENCE_BETWEEN_POINTS)
-            return false;
-        
-        return true;
-    }
-    
-    void add_point(const std::string& x, const std::string& y) {
-        cv::Point point = cv::Point(std::stoi(x), std::stoi(y));
-        points.push_back(point);
-    }
-    
-    std::string name;
-    Points points;
-};
-
-class DetectionResults {
-public :
-    DetectionResults() {
-        read_saved_results();
-    }
-    
-    bool has_result(int index) {
-        return !(index < 0 || index >= results.size());
-    }
-    
-    DetectionResult get(int index) {
-        return results[index];
-    }
-    
-private :
-    void read_saved_results() {
-        std::ifstream results_file(RESULTS_FILE_NAME);
-        if (!results_file) {
-            std::cerr << "Could not open results file " << RESULTS_FILE_NAME;
-            return;
-        }
-        
-        while (!results_file.eof()) {
-            DetectionResult result = DetectionResult(results_file);
-            if (result.is_valid())
-                results.push_back(result);
-        }
-    }
-    
-    std::vector<DetectionResult> results;
-};
+//#define DETECTION_MODE MT_EDGE_DETECT_TREES
+#define DETECTION_MODE MT_EDGE_DETECT_CANNY
 
 class Test {
 public :
@@ -225,7 +100,7 @@ private :
     
     std::vector<cv::Mat> images;
     DetectionResults saved_results;
-    MTDetector detector;
+    Detector detector;
     int fails;
     bool save_images;
 };

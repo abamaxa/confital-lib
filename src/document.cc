@@ -4,8 +4,8 @@
 #import <opencv2/highgui.hpp>
 #import <cmath>
 
-#import "MTDocumentRectangle.h"
-#import "MTLineRecord.h"
+#import "document.h"
+#import "line.h"
 
 #endif
 
@@ -14,7 +14,7 @@
 #define LEFT_SIDE   2
 #define RIGHT_SIDE  3
 
-DocumentRectangle::DocumentRectangle() :
+Document::Document() :
     m_dimensions_ratio(0.0),
     m_image_full_gray_ratio(0.0),
     m_image_edge_gray_ratio(0.0),
@@ -28,7 +28,7 @@ DocumentRectangle::DocumentRectangle() :
 {
 }
 
-DocumentRectangle::DocumentRectangle(const cv::Mat& image) :
+Document::Document(const cv::Mat& image) :
     m_dimensions_ratio(0.0),
     m_image_full_gray_ratio(0.0),
     m_image_edge_gray_ratio(0.0),
@@ -42,7 +42,7 @@ DocumentRectangle::DocumentRectangle(const cv::Mat& image) :
     m_minArea = float(m_image_width) * float(m_image_height) * MIN_AREA_RATIO;
 }
 
-DocumentRectangle::DocumentRectangle(const DocumentRectangle& toCopy) :
+Document::Document(const Document& toCopy) :
     m_dimensions_ratio(toCopy.m_dimensions_ratio),
     m_image_full_gray_ratio(toCopy.m_image_full_gray_ratio),
     m_image_edge_gray_ratio(toCopy.m_image_edge_gray_ratio),
@@ -61,7 +61,7 @@ DocumentRectangle::DocumentRectangle(const DocumentRectangle& toCopy) :
 
 }
 
-void DocumentRectangle::reset() {
+void Document::reset() {
     m_dimensions_ratio = 0.0;
     m_image_full_gray_ratio = 0.0;
     m_image_edge_gray_ratio = 0.0;
@@ -71,23 +71,25 @@ void DocumentRectangle::reset() {
     m_camera_orientated = false;
     
     m_bottom_left = m_bottom_right = m_top_right = m_top_left = cv::Point();
+    
+    
 }
 
-bool DocumentRectangle::assessRectangle(
-    const LineRecord& principleSide,
-    const LineRecord& normalSide1,
-    const LineRecord& oppositeSide,
-    const LineRecord& normalSide2,
+bool Document::assessRectangle(
+    const Line& principleSide,
+    const Line& normalSide1,
+    const Line& oppositeSide,
+    const Line& normalSide2,
     const cv::Mat& image
 )
 {
-    const LineRecord* lines[] = {&principleSide, &normalSide1, &oppositeSide, &normalSide2};
+    const Line* lines[] = {&principleSide, &normalSide1, &oppositeSide, &normalSide2};
     m_camera_orientated = orderSides(lines);
 
-    lines[0]->findLinesIntersectionPoint(*lines[2], m_bottom_left);
-    lines[0]->findLinesIntersectionPoint(*lines[3], m_bottom_right);
-    lines[1]->findLinesIntersectionPoint(*lines[3], m_top_right);
-    lines[1]->findLinesIntersectionPoint(*lines[2], m_top_left);
+    lines[0]->find_intersection(*lines[2], m_bottom_left);
+    lines[0]->find_intersection(*lines[3], m_bottom_right);
+    lines[1]->find_intersection(*lines[3], m_top_right);
+    lines[1]->find_intersection(*lines[2], m_top_left);
 
     bool is_probably_doc = calculateScores(lines);
 
@@ -103,7 +105,7 @@ bool DocumentRectangle::assessRectangle(
     return is_probably_doc;
 }
 
-bool DocumentRectangle::orderSides(const LineRecord** sides) const {
+bool Document::orderSides(const Line** sides) const {
     /*
     Determine which lines are verticalish and horitzontalish, if any.
     The most common use case will have a longer edge at bottom of screen,
@@ -125,7 +127,7 @@ bool DocumentRectangle::orderSides(const LineRecord** sides) const {
     // sides = ((pt1, pt2, theta), nRecord, pRecord, nRecord2)
     for (int i = 0;i < 4;++i) {
         // approximately horizontal
-        const LineRecord* side = sides[i];
+        const Line* side = sides[i];
 
         bool horizontal = (fabs(side->m_angle - M_PI / 2.) < M_PI / 2.);
         float this_max_y = (side->m_pt1.y + side->m_pt2.y) / 2.;
@@ -156,10 +158,10 @@ bool DocumentRectangle::orderSides(const LineRecord** sides) const {
         camera_orientated = false;
     }
 
-    const LineRecord *left_side;
-    const LineRecord *right_side;
-    const LineRecord *bottom_side = sides[side_ordinal];
-    const LineRecord *top_side = sides[(side_ordinal + 2) % 4];
+    const Line *left_side;
+    const Line *right_side;
+    const Line *bottom_side = sides[side_ordinal];
+    const Line *top_side = sides[(side_ordinal + 2) % 4];
 
     if (sides[(side_ordinal - 1) % 4]->m_pt2.x < sides[(side_ordinal + 1) % 4]->m_pt2.x) {
         left_side = sides[(side_ordinal - 1) % 4];
@@ -178,7 +180,7 @@ bool DocumentRectangle::orderSides(const LineRecord** sides) const {
     return camera_orientated;
 }
 
-bool DocumentRectangle::calculateScores(const LineRecord** sides) {
+bool Document::calculateScores(const Line** sides) {
     /* Order of sides is bottom, top, left and right.
      Order of corners is bottom, right, top and left.
 
@@ -315,7 +317,7 @@ bool DocumentRectangle::calculateScores(const LineRecord** sides) {
 }
 
 
-bool DocumentRectangle::checkDimensionRatio
+bool Document::checkDimensionRatio
 (
     float bottom_len,
     float top_len,
@@ -360,7 +362,7 @@ bool DocumentRectangle::checkDimensionRatio
     return shape_ok;
 }
 
-void DocumentRectangle::calculateHistogramRatios(const cv::Mat& image) {
+void Document::calculateHistogramRatios(const cv::Mat& image) {
     cv::Mat subimg, mask, hsv_img, histogram;
     int channels[] = {1};
     int histSize[] = {4};
@@ -393,19 +395,19 @@ void DocumentRectangle::calculateHistogramRatios(const cv::Mat& image) {
     m_image_full_gray_ratio = calculate_ratio(histogram, hsv_img.cols * hsv_img.rows);
 }
 
-float DocumentRectangle::calculate_ratio(cv::Mat& sat, int num_pixels) const {
+float Document::calculate_ratio(cv::Mat& sat, int num_pixels) const {
     return (float(sat.at<float>(0)) / float(num_pixels));
 }
 
-float DocumentRectangle::calculate_ratio2(cv::Mat& sat, int num_pixels) const {
+float Document::calculate_ratio2(cv::Mat& sat, int num_pixels) const {
     return ((float(sat.at<float>(0)) + float(sat.at<float>(1))) / float(num_pixels));
 }
 
-float DocumentRectangle::distancePoints(const cv::Point& pt1, const cv::Point& pt2) const {
+float Document::distancePoints(const cv::Point& pt1, const cv::Point& pt2) const {
     return sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2) );
 }
 
-float DocumentRectangle::calcAngle(float len_a, float len_b, float len_c) const {
+float Document::calcAngle(float len_a, float len_b, float len_c) const {
     // c2 = a2 + b2 − 2ab cos(C)
     float cosc = (len_a * len_a + len_b * len_b - len_c * len_c) / (2 * len_a * len_c);
     return acos(cosc);
@@ -422,7 +424,7 @@ float DocumentRectangle::calcAngle(float len_a, float len_b, float len_c) const 
     m_top_left.y *= scale;
 }*/
 
-void DocumentRectangle::rescale(const cv::Mat& image) {
+void Document::rescale(const cv::Mat& image) {
     float x_scale = float(image.cols) / float(m_image_width);
     float y_scale = float(image.rows) / float(m_image_height);
 
@@ -440,7 +442,7 @@ void DocumentRectangle::rescale(const cv::Mat& image) {
     m_minArea = float(m_image_width) * float(m_image_height) * MIN_AREA_RATIO;
 }
 
-void DocumentRectangle::copyDeskewedDocument(const cv::Mat& image, cv::Mat& output) const
+void Document::copyDeskewedDocument(const cv::Mat& image, cv::Mat& output) const
 {
     // construct destination points to obtain a "birds eye view",
     // (i.e. top-down view) of the image, again specifying points
@@ -479,7 +481,7 @@ void DocumentRectangle::copyDeskewedDocument(const cv::Mat& image, cv::Mat& outp
             cv::Size(box.boundingRect().width, box.boundingRect().height));
 }
 
-void DocumentRectangle::getPoints(std::vector<cv::Point>& matPoints) const {
+void Document::getPoints(std::vector<cv::Point>& matPoints) const {
     //cv::Mat points;
     matPoints.clear();
 
@@ -489,14 +491,14 @@ void DocumentRectangle::getPoints(std::vector<cv::Point>& matPoints) const {
     matPoints.push_back(m_bottom_left);
 }
 
-void DocumentRectangle::draw(cv::Mat& image, const cv::Scalar& color) const {
+void Document::draw(cv::Mat& image, const cv::Scalar& color) const {
     cv::line(image, m_top_left, m_top_right, color, 3);
     cv::line(image, m_top_right, m_bottom_right, color, 3);
     cv::line(image, m_bottom_left, m_bottom_right, color, 3);
     cv::line(image, m_bottom_left, m_top_left, color, 3);
 }
 
-float DocumentRectangle::getScore() const {
+float Document::getScore() const {
     return (m_image_full_gray_ratio * m_image_edge_gray_ratio * m_image_edge_gray_ratio);
 }
 

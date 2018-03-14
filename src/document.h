@@ -1,20 +1,20 @@
-#ifndef MTDocumentRectangle_h_included
-#define MTDocumentRectangle_h_included
+#ifndef Document_h_included
+#define Document_h_included
 
-#import "MTConfig.h"
-#import "MTLineRecord.h"
+#import "config.h"
+#import "line.h"
 
-class DocumentRectangle {
+class Document {
 public:
-    DocumentRectangle();
-    DocumentRectangle(const DocumentRectangle& toCopy);
-    DocumentRectangle(const cv::Mat& image);
+    Document();
+    Document(const Document& toCopy);
+    Document(const cv::Mat& image);
 
     bool assessRectangle(
-        const LineRecord& principleSide,
-        const LineRecord& normalSide1,
-        const LineRecord& oppositeSide,
-        const LineRecord& normalSide2,
+        const Line& principleSide,
+        const Line& normalSide1,
+        const Line& oppositeSide,
+        const Line& normalSide2,
         const cv::Mat& image
     );
 
@@ -47,9 +47,9 @@ public:
     bool m_camera_orientated;
 
 private:
-    bool calculateScores(const LineRecord** sides);
+    bool calculateScores(const Line** sides);
 
-    bool orderSides(const LineRecord** sides) const;
+    bool orderSides(const Line** sides) const;
 
     bool checkDimensionRatio(float bottom_len, float top_len, float left_len,
          float right_len, bool adjustForPerspective, float& result) const;
