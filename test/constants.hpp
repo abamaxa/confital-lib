@@ -10,7 +10,7 @@
 #define constants_h
 
 const int MAX_DIFFERENCE_BETWEEN_POINTS = 10;
-const char* const RESULTS_FILE_NAME = "../../../../../test/test-results-canny.csv";
+const char* const RESULTS_FILE_NAME = "../../../../../../data/test-results-canny.csv";
 
 const char* const IMAGE_PATHS[] = {
     "messed.png",
@@ -25,9 +25,9 @@ const char* const IMAGE_PATHS[] = {
 };
 
 const size_t NUM_IMAGES = sizeof(IMAGE_PATHS) / sizeof(const char*);
-const char* const IMAGE_DIR = "../../../../../test/images";
-const char* const SAVED_DIR = "../../../../../test/images_saved";
-const char* const MODEL_FILE = "../../../../../src/model.yml.gz";
+const char* const IMAGE_DIR = "../../../../../../data/images";
+const char* const SAVED_DIR = "../../../../../../data/images_saved";
+const char* const MODEL_FILE = "../../../../../../src/model.yml.gz";
 
 
 #endif /* constants_h */

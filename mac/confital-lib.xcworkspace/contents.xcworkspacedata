@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:confital-lib-mactest/confital-lib-mactest.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../data">
+   </FileRef>
+   <FileRef
+      location = "group:../src">
+   </FileRef>
+   <FileRef
+      location = "group:../test">
+   </FileRef>
+</Workspace>

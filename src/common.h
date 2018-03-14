@@ -8,4 +8,6 @@
 #import <opencv2/ximgproc.hpp>
 #import <opencv2/highgui.hpp>
 
+#import <cmath>
+#import <algorithm>
 #endif

@@ -7,6 +7,8 @@
 
 #import "detector.h"
 
+#include "pipeline_job.h"
+#include "algorithms/line_detector.h"
 //typedef std::vector<cv::Point> PointVector;
 
 Detector::Detector() :
@@ -103,6 +105,7 @@ void Detector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
     
     m_width = m_imgSaved.cols;
     m_height = m_imgSaved.rows;
+    
 
     switch (edgeMethod) {
         case MT_EDGE_DETECT_TREES:
@@ -117,7 +120,13 @@ void Detector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
             break;
     }
 
-    findHoughLines(imgResult, 16);
+    PipelineJob job(imgResult);
+    LineDetector line_detector;
+    
+    //findHoughLines(imgResult, 16);
+    line_detector.apply(job);
+    lineCandidates = job.line_candidates;
+    
     analyseLines();
     detectRectangle();
     
