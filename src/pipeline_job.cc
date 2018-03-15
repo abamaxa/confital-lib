@@ -3,7 +3,7 @@
 
 #include "pipeline_job.h"
 
-PipelineJob::PipelineJob(cv::Mat& _image)
+PipelineJob::PipelineJob(const cv::Mat& _image)
 : image(_image), initial_image(_image)
 {
     
@@ -31,7 +31,7 @@ LineVector& PipelineJob::get_lines() {
     return line_candidates;
 }
 
-cv::Mat& PipelineJob::get_initial_image() {
+const cv::Mat& PipelineJob::get_initial_image() const {
     return initial_image;
 }
 
@@ -50,3 +50,5 @@ void PipelineJob::set_result(const Document& rectangle) {
 const Document& PipelineJob::get_result() const {
     return result_rectangle;
 }
+
+

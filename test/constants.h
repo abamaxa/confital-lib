@@ -9,7 +9,7 @@
 #ifndef constants_h
 #define constants_h
 
-const int MAX_DIFFERENCE_BETWEEN_POINTS = 10;
+const int MAX_DIFFERENCE_BETWEEN_POINTS = 20;
 const char* const RESULTS_FILE_NAME = "../../../../../../data/test-results-canny.csv";
 
 const char* const IMAGE_PATHS[] = {

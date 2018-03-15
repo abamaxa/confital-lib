@@ -22,6 +22,7 @@
 		83A597E72059824B005A98C4 /* gather_lines.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A597E52059824B005A98C4 /* gather_lines.cc */; };
 		83A597ED20599A5D005A98C4 /* best_rectangle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A597EB20599A5D005A98C4 /* best_rectangle.cc */; };
 		83A597F020599A97005A98C4 /* debug_drawings.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A597EE20599A97005A98C4 /* debug_drawings.cc */; };
+		83A597F3205AC40E005A98C4 /* rectangle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A597F1205AC40E005A98C4 /* rectangle.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,6 +69,8 @@
 		83A597EC20599A5D005A98C4 /* best_rectangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = best_rectangle.h; path = ../../src/algorithms/best_rectangle.h; sourceTree = "<group>"; };
 		83A597EE20599A97005A98C4 /* debug_drawings.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = debug_drawings.cc; path = ../../src/algorithms/debug_drawings.cc; sourceTree = "<group>"; };
 		83A597EF20599A97005A98C4 /* debug_drawings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = debug_drawings.h; path = ../../src/algorithms/debug_drawings.h; sourceTree = "<group>"; };
+		83A597F1205AC40E005A98C4 /* rectangle.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rectangle.cc; path = ../../src/rectangle.cc; sourceTree = "<group>"; };
+		83A597F2205AC40E005A98C4 /* rectangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rectangle.h; path = ../../src/rectangle.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +161,8 @@
 				83A597DE20595CD3005A98C4 /* line.h */,
 				83A597D920595CD2005A98C4 /* pipeline_job.cc */,
 				83A597DF20595CD3005A98C4 /* pipeline_job.h */,
+				83A597F1205AC40E005A98C4 /* rectangle.cc */,
+				83A597F2205AC40E005A98C4 /* rectangle.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				83A597C920595BAC005A98C4 /* line_detector.cc in Sources */,
 				83A597E120595CD3005A98C4 /* pipeline_job.cc in Sources */,
 				83A597CA20595BAC005A98C4 /* edge_detector.cc in Sources */,
+				83A597F3205AC40E005A98C4 /* rectangle.cc in Sources */,
 				83A597E320595CD3005A98C4 /* line.cc in Sources */,
 				83A597E72059824B005A98C4 /* gather_lines.cc in Sources */,
 				83A597E020595CD3005A98C4 /* detector.cc in Sources */,

@@ -37,7 +37,7 @@ public :
         cv::Mat test_image;
         images[ordinal].copyTo(test_image);
         
-        detector.processImage(test_image, DETECTION_MODE);
+        detector.process_image(test_image, DETECTION_MODE);
         
         check_detection(ordinal);
         
@@ -50,7 +50,7 @@ public :
     
     cv::Mat get_document_image(int ordinal) {
         cv::Mat result;
-        detector.getDocumentImage(result);
+        detector.copy_deskewed_doc_region(images[ordinal], result);
         return result;
     }
     
@@ -75,7 +75,7 @@ private :
     
     void check_detection(int ordinal) {
         Points points;
-        detector.getDocumentPoints(points);
+        detector.get_document_points(points);
         
         if (saved_results.has_result(ordinal)) {
             DetectionResult detection_result = saved_results.get(ordinal);
@@ -126,13 +126,13 @@ int main(int argc, char** argv)
         const char* command = argv[1];
         int number = std::stoi(argv[2]);
         
-        if (strcmp(command,"-c")) {
+        if (strcmp(command,"-c") == 0) {
             Test tester = Test(false);
             for (int i = 0; i < number;i++) {
                 tester.test_all();
             }
         }
-        else if (strcmp(command,"-n")) {
+        else if (strcmp(command,"-n") == 0) {
             Test tester = Test(true);
             tester.test_one(number);
             tester.report_fails();

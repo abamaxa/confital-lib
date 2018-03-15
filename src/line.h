@@ -12,7 +12,8 @@ typedef std::vector<Line> LineVector;
 class Line {
 public:
     Line(float rho, float theta);
-    Line(int x1, int y1, int x2, int y2, int width, int height);
+    Line(const cv::Vec4i&);
+    //Line(int x1, int y1, int x2, int y2, int width, int height);
     Line(const cv::Point& _pt1, const cv::Point& _pt2, double _angle);
 
     cv::Point m_pt1;

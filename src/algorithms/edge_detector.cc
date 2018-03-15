@@ -31,7 +31,7 @@ void TreesEdgeDetector::apply(PipelineJob& job)
     
     cv::medianBlur(image, imgTemp, 11);
     cv::cvtColor(imgTemp, imgTemp, CV_BGR2RGB);
-    //cv::cvtColor(m_imgSaved, imgTemp, CV_BGR2RGB);
+    //cv::cvtColor(image, imgTemp, CV_BGR2RGB);
     
     imgTemp.convertTo(image_CV_32FC3, CV_32FC3, 1/255.0);
     image = cv::Mat(image_CV_32FC3.size(), image_CV_32FC3.type());

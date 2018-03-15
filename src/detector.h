@@ -21,27 +21,25 @@ class Detector {
 public:
     Detector();
 
-    bool initialize(cv::String pathToModel);
-    void processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod);
-
-    bool getDocumentImage(cv::Mat& image);
-    bool getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage);
-    
-    void getDocumentPoints(std::vector<cv::Point>& points) const;
-    void reset();
+    virtual bool initialize(cv::String path_to_model);
+    virtual void process_image(cv::Mat& original_image, EDGE_DETECTORS edge_method);
+    virtual bool found_document() const;
+    virtual bool copy_deskewed_doc_region(cv::Mat& src_image, cv::Mat& dest_image);
+    virtual void get_document_points(std::vector<cv::Point>& points) const;
+    virtual void reset();
     
 private:
-    void calculate_rescale_factor(cv::Mat& imgOriginal);
-    void scale_image(cv::Mat& imgOriginal);
-    void rescale_image(cv::Mat& imgOriginal);
+    void calculate_rescale_factor(cv::Mat& original_image);
+    void scale_image(cv::Mat& original_image);
+    void rescale_image(cv::Mat& original_image);
     void update_detection_state(const Document& rectangle);
 
-    cv::Ptr<cv::ximgproc::StructuredEdgeDetection> m_dollar;
-    int m_frames;
-    cv::Mat m_imgSaved;
-    Document m_lastRect;
-    bool m_documentDetected;
-    int m_framesSinceDocDetected;
+    cv::Ptr<cv::ximgproc::StructuredEdgeDetection> edge_detector;
+    int frame_counter;
+    cv::Mat scaled_image;
+    Document detected_document;
+    Document last_valid_document;
+    int num_frames_since_doc_detected;
     int rescale_factor;
 };
 

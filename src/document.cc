@@ -87,15 +87,19 @@ bool Document::assessRectangle(
 )
 {
     const Line* lines[] = {&principleSide, &normalSide1, &oppositeSide, &normalSide2};
-    m_camera_orientated = orderSides(lines);
+    if (!calculate_intersections(lines))
+        return false;
 
-    lines[0]->find_intersection(*lines[2], m_bottom_left);
-    lines[0]->find_intersection(*lines[3], m_bottom_right);
-    lines[1]->find_intersection(*lines[3], m_top_right);
-    lines[1]->find_intersection(*lines[2], m_top_left);
-
+    if (!are_lines_within_corners(lines))
+        return false;
+    
+    m_camera_orientated = true;
+    
+    if (!intersections_are_close())
+        return false;
+ 
     is_probably_doc = calculateScores(lines);
-
+    
     if (is_probably_doc) {
         calculateHistogramRatios(image);
         if (m_image_full_gray_ratio < MIN_FULL_GRAY_RATIO ||
@@ -108,83 +112,132 @@ bool Document::assessRectangle(
     return is_probably_doc;
 }
 
-bool Document::is_valid() const {
-    return is_probably_doc;
+int match_side(const Line** lines, cv::Point* points, cv::Point match, cv::Point match2) {
+    int idx = 0;
+    int match_i = -1;
+    int match_i2 = -1;
+    int match_n = -1;
+    int match_n2 = -1;
+    
+    for (int i = 0;i < 3;i += 2) {
+        for (int n = 1;n < 4;n += 2) {
+            if (points[idx] == match) {
+                match_i = i;
+                match_n = n;
+            }
+            if (points[idx] == match2) {
+                match_i2 = i;
+                match_n2 = n;
+            }
+            idx += 1;
+        }
+    }
+    
+    if (match_i != -1 && match_i2 != -1) {
+        if (match_i == match_i2) {
+            return match_i;
+        }
+        if (match_n == match_n2) {
+            return match_n;
+        }
+    }
+    
+    return -1;
 }
 
-bool Document::orderSides(const Line** sides) const {
-    /*
-    Determine which lines are verticalish and horitzontalish, if any.
-    The most common use case will have a longer edge at bottom of screen,
-    two sides tramlining up the image with a short line at the top.
+bool Document::calculate_intersections(const Line** lines) {
+    cv::Point points[4];
 
-    Coordinate system has 0,0 at top left corner, so looking for
-    edge with thetas around pi/2 with the lowest y coordinates
-    (work on min?)
-    */
-
-    int bottom_ordinal = -1;
-    int counter = 0;
-    int side_ordinal = 0;
-    float max_y = 0.;
-    float avg_y = 0.;
-    int lowest_ordinal = -1;
-    bool camera_orientated = false;
-
-    // sides = ((pt1, pt2, theta), nRecord, pRecord, nRecord2)
-    for (int i = 0;i < 4;++i) {
-        // approximately horizontal
-        const Line* side = sides[i];
-
-        bool horizontal = (fabs(side->m_angle - M_PI / 2.) < M_PI / 2.);
-        float this_max_y = (side->m_pt1.y + side->m_pt2.y) / 2.;
-
-        if (horizontal && max_y < this_max_y) {
-            max_y = this_max_y;
-            bottom_ordinal = counter;
+    lines[0]->find_intersection(*lines[1], points[0]);
+    lines[0]->find_intersection(*lines[3], points[1]);
+    lines[2]->find_intersection(*lines[1], points[2]);
+    lines[2]->find_intersection(*lines[3], points[3]);
+    
+    int min_sum = 100000;
+    int max_sum = -min_sum;
+    int min_diff = 100000;
+    int max_diff = -min_sum;
+    
+    for (int i = 0;i < 4;i++) {
+        int sum = points[i].x + points[i].y;
+        int diff = points[i].y - points[i].x;
+        
+        if (sum > max_sum) {
+            m_bottom_right = points[i];
+            max_sum = sum;
         }
-        else if (!horizontal && avg_y < this_max_y) {
-            avg_y = this_max_y;
-            lowest_ordinal = counter;
+        if (sum < min_sum) {
+            m_top_left = points[i];
+            min_sum = sum;
         }
-
-        counter += 1;
+        if (diff > max_diff) {
+            m_bottom_left = points[i];
+            max_diff = diff;
+        }
+        if (diff < min_diff) {
+            m_top_right = points[i];
+            min_diff = diff;
+        }
     }
-
-    if (bottom_ordinal != -1) {
-        side_ordinal = bottom_ordinal;
-        /* Now find which of the adjacent sides is left most and
-         right most by checking for min/max x coords of points
-         with the highest value for y, ie first point
-         because pairs have already been sorted in lowest y first
-         Left most will have lowest x. */
-        camera_orientated = true;
+    
+    const Line* ordered_lines[4];
+    try {
+        ordered_lines[BOTTOM_SIDE] = lines[match_side(lines, points, m_bottom_left, m_bottom_right)];
+        ordered_lines[TOP_SIDE] = lines[match_side(lines, points, m_top_left, m_top_right)];
+        ordered_lines[LEFT_SIDE] = lines[match_side(lines, points, m_top_left, m_bottom_left)];
+        ordered_lines[RIGHT_SIDE] = lines[match_side(lines, points, m_top_right, m_bottom_right)];
+        memcpy(lines, ordered_lines, sizeof(ordered_lines));
+        return true;
+    } catch (int error) {
+        return false;
     }
-    else {
-        side_ordinal = lowest_ordinal;
-        camera_orientated = false;
+}
+
+bool Document::intersections_are_close() const {
+    return (
+        intersection_in_or_near_image(m_bottom_left) &&
+        intersection_in_or_near_image(m_bottom_right) &&
+        intersection_in_or_near_image(m_top_right) &&
+        intersection_in_or_near_image(m_top_left)
+    );
+}
+
+bool Document::intersection_in_or_near_image(const cv::Point& intersection) const
+{
+    int x1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int y1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int x2 = m_image_width + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int y2 = m_image_height + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    
+    return ((intersection.x >= x1 && intersection.x <= x2) &&
+            (intersection.y >= y1 && intersection.y <= y2));
+}
+
+bool Document::are_lines_within_corners(const Line** lines) const {
+    int min_x = std::min(m_top_left.x, m_bottom_left.x);
+    int max_x = std::max(m_top_right.x, m_bottom_right.x);
+    int min_y = std::min(m_top_left.y, m_top_right.y);
+    int max_y = std::max(m_bottom_left.y, m_bottom_right.y);
+    
+    for (int i = 0;i < 4;i++) {
+        if (std::max(lines[i]->m_pt1.x, lines[i]->m_pt2.x) < min_x)
+            return false;
+        
+        if (std::min(lines[i]->m_pt1.x, lines[i]->m_pt2.x) > max_x)
+            return false;
+        
+        if (std::max(lines[i]->m_pt1.y, lines[i]->m_pt2.y) < min_y)
+            return false;
+        
+        if (std::min(lines[i]->m_pt1.y, lines[i]->m_pt2.y) > max_y)
+            return false;
     }
+    
+    return true;
+}
 
-    const Line *left_side;
-    const Line *right_side;
-    const Line *bottom_side = sides[side_ordinal];
-    const Line *top_side = sides[(side_ordinal + 2) % 4];
-
-    if (sides[(side_ordinal - 1) % 4]->m_pt2.x < sides[(side_ordinal + 1) % 4]->m_pt2.x) {
-        left_side = sides[(side_ordinal - 1) % 4];
-        right_side = sides[(side_ordinal + 1) % 4];
-    }
-    else {
-        left_side = sides[(side_ordinal + 1) % 4];
-        right_side = sides[(side_ordinal - 1) % 4];
-    }
-
-    *sides++ = bottom_side;
-    *sides++ = top_side;
-    *sides++ = left_side;
-    *sides++ = right_side;
-
-    return camera_orientated;
+bool Document::is_valid() const {
+    return is_probably_doc;
 }
 
 bool Document::calculateScores(const Line** sides) {
@@ -213,7 +266,6 @@ bool Document::calculateScores(const Line** sides) {
     bool horizontal_doc = false;
     float corner_angle1 = 0.0, corner_angle2 = 0.0;
     bool failed = false;
-    //float angle_from_parallel = 0.0;
     float angle = 0.0;
     float para_ratio = 0.0;
 
@@ -243,11 +295,9 @@ bool Document::calculateScores(const Line** sides) {
         // However, both should also be less than pi / 2 radians
         // As a heuristic, we will exclude shapes where the top is longer than the
         // bottom too.
-        //const LineRecord* nearest_side = NULL;
-
+        
         if (horizontal_doc) {
             if (left_len < right_len) {
-                //nearest_side = sides[RIGHT_SIDE];
                 para_ratio = left_len / right_len;
                 // bottom_left, bottom_right, top_left, top_right
                 corner_angle1 = calcAngle(right_len, top_len,
@@ -256,24 +306,19 @@ bool Document::calculateScores(const Line** sides) {
                         distancePoints(m_bottom_left, m_top_right));
             }
             else {
-                //nearest_side = sides[LEFT_SIDE];
                 para_ratio = right_len / left_len;
                 corner_angle1 = calcAngle(left_len, top_len,
                         distancePoints(m_bottom_left, m_top_right));
                 corner_angle2 = calcAngle(left_len, bottom_len,
                         distancePoints(m_bottom_right, m_top_left));
             }
-
-            //angle_from_parallel = fabs(sides[RIGHT_SIDE]->m_angle - sides[LEFT_SIDE]->m_angle);
         }
         else if (vertical_doc) {
-            //nearest_side = sides[BOTTOM_SIDE];
             para_ratio = top_len / bottom_len;
             corner_angle1 = calcAngle(left_len, bottom_len,
                             distancePoints(m_bottom_right, m_top_left));
             corner_angle2 = calcAngle(right_len, bottom_len,
                             distancePoints(m_bottom_left, m_top_right));
-            //angle_from_parallel = fabs(sides[BOTTOM_SIDE]->m_angle - sides[TOP_SIDE]->m_angle);
         }
         else {
             para_ratio = fmin(top_len, bottom_len) / fmax(top_len, bottom_len);
@@ -365,6 +410,7 @@ bool Document::checkDimensionRatio
         }
     }
 
+    result = std::fabs(result - 0.707070);
     //NSLog(ratio)
     return shape_ok;
 }
@@ -376,7 +422,7 @@ void Document::calculateHistogramRatios(const cv::Mat& image) {
     float sranges[] = { 0, 256 };
     const float* ranges[] = { sranges };
 
-    copyDeskewedDocument(image, subimg);
+    copy_deskewed_document(image, subimg);
     mask = cv::Mat::zeros(subimg.rows, subimg.cols , CV_8UC1);
 
     cv::Point2f points[4];
@@ -420,17 +466,6 @@ float Document::calcAngle(float len_a, float len_b, float len_c) const {
     return acos(cosc);
 }
 
-/*void DocumentRectangle::scalePoints(float scale) {
-    m_bottom_left.x *= scale;
-    m_bottom_left.y *= scale;
-    m_bottom_right.x *= scale;
-    m_bottom_right.y *= scale;
-    m_top_right.x *= scale;
-    m_top_right.y *= scale;
-    m_top_left.x *= scale;
-    m_top_left.y *= scale;
-}*/
-
 void Document::rescale(const cv::Mat& image) {
     float x_scale = float(image.cols) / float(m_image_width);
     float y_scale = float(image.rows) / float(m_image_height);
@@ -449,7 +484,7 @@ void Document::rescale(const cv::Mat& image) {
     m_minArea = float(m_image_width) * float(m_image_height) * MIN_AREA_RATIO;
 }
 
-void Document::copyDeskewedDocument(const cv::Mat& image, cv::Mat& output) const
+void Document::copy_deskewed_document(const cv::Mat& image, cv::Mat& output) const
 {
     // construct destination points to obtain a "birds eye view",
     // (i.e. top-down view) of the image, again specifying points
@@ -507,20 +542,6 @@ void Document::draw(cv::Mat& image, const cv::Scalar& color) const {
 
 float Document::getScore() const {
     return (m_image_full_gray_ratio * m_image_edge_gray_ratio * m_image_edge_gray_ratio);
+    //return (1. - m_dimensions_ratio);
 }
 
-/*
-def calculate_ratio_power(self, sat, num_pixels) :
-    int num_bins = sat.shape[0]
-    int count = 0
-    float ratio = 0
-    divisor = 0
-    for val in sat :
-        mul = np.power(16, num_bins - count)
-        ratio += val * mul
-        divisor += num_pixels * mul
-        count += 1
-        break
-
-    return ratio / divisor;
-}*/

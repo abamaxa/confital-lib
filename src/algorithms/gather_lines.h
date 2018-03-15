@@ -16,6 +16,7 @@ public:
 private :
     void group_parallel_and_normal_lines(PipelineJob& job);
     void generate_rectangles(PipelineJob& job);
+    bool intersection_in_or_near_image(const PipelineJob& job, const cv::Point& intersection) const;
     
     LineVector selectedCandidates;
 };

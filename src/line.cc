@@ -86,17 +86,25 @@ Line::Line(float rho, float theta) {
     }
 }
 
-Line::Line(int x1, int y1, int x2, int y2, int width, int height)
+/*
+Line::Line(const cv::Vec4i& line)
 {
+    const int LONG_LINE_START = -1000.0;
+    const int LONG_LINE_END = 4000.0;
+    float x1 = float(line[0]);
+    float y1 = float(line[1]);
+    float x2 = float(line[2]);
+    float y2 = float(line[3]);
+    
     // !!! divide by zero
     if (x1 == x2)  {
-        m_pt1 = cv::Point(x1, 0);
-        m_pt2 = cv::Point(x2, height);
+        m_pt1 = cv::Point(x1, LONG_LINE_START);
+        m_pt2 = cv::Point(x2, LONG_LINE_END);
         m_angle = M_PI / 2;
     }
     else if (y1 == y2) {
-        m_pt1 = cv::Point(0, std::min(y1, y2));
-        m_pt2 = cv::Point(width, std::max(y1, y2));
+        m_pt1 = cv::Point(LONG_LINE_START, std::min(y1, y2));
+        m_pt2 = cv::Point(LONG_LINE_END, std::max(y1, y2));
         m_angle = 0.0;
     }
     else {
@@ -104,17 +112,51 @@ Line::Line(int x1, int y1, int x2, int y2, int width, int height)
         // y = mx + c
         float c = y1 - (m * x1);
 
-        // Cross top image at y = height
-        float xct = (height - c) / m;
-        // Cross top image at y = width
-        float xcb = (0 - c) / m;
+        float xct = LONG_LINE_END;
+        float xcb = LONG_LINE_START;
 
         float yct = m * xct + c;
         float ycb = m * xcb + c;
-
-        m_pt1 = cv::Point(int(xct), int(yct));
-        m_pt2 = cv::Point(int(xcb), int(ycb));
+        
+        if (yct < ycb) {
+            m_pt1 = cv::Point(int(xct), int(yct));
+            m_pt2 = cv::Point(int(xcb), int(ycb));
+        }
+        else {
+            m_pt2 = cv::Point(int(xct), int(yct));
+            m_pt1 = cv::Point(int(xcb), int(ycb));
+        }
+        
         m_angle = atan(m);
+    }
+}*/
+
+Line::Line(const cv::Vec4i& line)
+{
+    // !!! divide by zero
+    if (line[0] == line[2])  {
+        m_angle = M_PI / 2;
+    }
+    else if (line[1] == line[3]) {
+        m_angle = 0.0;
+    }
+    else {
+        float x1 = float(line[0]);
+        float y1 = float(line[1]);
+        float x2 = float(line[2]);
+        float y2 = float(line[3]);
+        
+        float m = (y2 - y1) / (x2 - x1);
+        m_angle = atan(m);
+    }
+    
+    if (line[1] < line[3]) {
+        m_pt1 = cv::Point(line[0], line[1]);
+        m_pt2 = cv::Point(line[2], line[3]);
+    }
+    else {
+        m_pt2 = cv::Point(line[0], line[1]);
+        m_pt1 = cv::Point(line[2], line[3]);
     }
 }
 

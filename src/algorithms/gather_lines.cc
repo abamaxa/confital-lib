@@ -38,7 +38,10 @@ void RectangleDetector::group_parallel_and_normal_lines(PipelineJob& job)
                 lineRecord.m_parallelSides.push_back(SideRecord(lineRecord2, angle));
             }
             else if (isApproxNormal) {
-                lineRecord.m_normalSides.push_back(SideRecord(lineRecord2, angle));
+                cv::Point intersection;
+                lineRecord.find_intersection(lineRecord2, intersection);
+                if (intersection_in_or_near_image(job, intersection))
+                    lineRecord.m_normalSides.push_back(SideRecord(lineRecord2, angle));
             }
         }
         
@@ -95,3 +98,20 @@ void RectangleDetector::generate_rectangles(PipelineJob& job)
         }
     }
 }
+
+bool RectangleDetector::intersection_in_or_near_image
+(
+    const PipelineJob& job,
+    const cv::Point& intersection
+) const
+{
+    int x1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int y1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int x2 = job.image_width() + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    int y2 = job.image_height() + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
+    
+    return ((intersection.x >= x1 && intersection.x <= x2) &&
+            (intersection.y >= y1 && intersection.y <= y2));
+}
+
+

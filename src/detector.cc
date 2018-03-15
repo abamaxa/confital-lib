@@ -6,49 +6,42 @@
 #import <algorithm>
 
 #import "detector.h"
-
 #include "pipeline_job.h"
 #include "algorithms/algorithms.h"
 
-//typedef std::vector<cv::Point> PointVector;
-
 Detector::Detector() :
-    m_frames(0),
-    m_documentDetected(false),
-    m_framesSinceDocDetected(1000),
+    frame_counter(0),
+    num_frames_since_doc_detected(1000),
     rescale_factor(1)
 {
-
 }
 
 void Detector::reset() {
-    m_frames = 0;
-    m_documentDetected = false;
-    m_framesSinceDocDetected = 1000;
+    frame_counter = 0;
+    num_frames_since_doc_detected = 1000;
 
-    m_lastRect.reset();
+    detected_document.reset();
+    last_valid_document.reset();
 }
 
-bool Detector::initialize(cv::String pathToModel)
+bool Detector::initialize(cv::String path_to_model)
 {
-    //NSString* modelFilename = [[NSBundle mainBundle] pathForResource:@"model.yml" ofType:@"gz"];
-    //cv::String modelFilenameStr = std::string([modelFilename UTF8String]);
-    m_dollar = cv::ximgproc::createStructuredEdgeDetection(pathToModel);
+    edge_detector = cv::ximgproc::createStructuredEdgeDetection(path_to_model);
     return true;
 }
 
-void Detector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
+void Detector::process_image(cv::Mat& original_image, EDGE_DETECTORS edge_method)
 {
     cv::Mat imgResult;
 
-    m_frames++;
+    frame_counter++;
 
-    calculate_rescale_factor(imgOriginal);
-    scale_image(imgOriginal);
+    calculate_rescale_factor(original_image);
+    scale_image(original_image);
 
-    PipelineJob job(m_imgSaved);
+    PipelineJob job(scaled_image);
     CannyEdgeDetector canny_detector;
-    TreesEdgeDetector trees_detector(m_dollar);
+    TreesEdgeDetector trees_detector(edge_detector);
     LineDetector line_detector;
     RectangleDetector rectangle_detector;
     BestRectangleSelector rectangle_selector;
@@ -63,103 +56,93 @@ void Detector::processImage(cv::Mat& imgOriginal, EDGE_DETECTORS edgeMethod)
     draw_detected_objects.apply(job);
 #endif
     
-    const Document& rectangle = job.get_result();
+    detected_document = job.get_result();
     
-    if (rectangle.is_valid() || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
-        imgOriginal.copyTo(m_imgSaved);
-        if (rectangle.is_valid()) {
-            m_lastRect = rectangle;
-            m_lastRect.rescale(imgOriginal);
+    if (detected_document.is_valid() || found_document()) {
+        original_image.copyTo(scaled_image);
+        if (detected_document.is_valid()) {
+            last_valid_document = detected_document;
+            last_valid_document.rescale(original_image);
         }
 
-        m_lastRect.draw(imgOriginal, cv::Scalar(0,255,0,255));
+        last_valid_document.draw(original_image, cv::Scalar(0,255,0,255));
     }
     else {
 #ifdef DEBUG_DRAWING
-        rescale_image(imgOriginal);
+        rescale_image(original_image);
 #else
-        imgOriginal.copyTo(m_imgSaved);
+        original_image.copyTo(scaled_image);
 #endif
     }
 
-    update_detection_state(rectangle);
+    update_detection_state(detected_document);
 }
 
-void Detector::calculate_rescale_factor(cv::Mat& imgOriginal) {
-    int minDim = std::min(imgOriginal.cols, imgOriginal.rows);
+void Detector::calculate_rescale_factor(cv::Mat& original_image) {
+    int minDim = std::min(original_image.cols, original_image.rows);
     int scale = ceil(minDim / 360) + 1;
     rescale_factor = ceil(log(scale)/log(2));
 }
 
-void Detector::scale_image(cv::Mat& imgOriginal) {
+void Detector::scale_image(cv::Mat& original_image) {
     for (int i = 0;i < rescale_factor;i++) {
         if (i) {
-            cv::pyrDown(m_imgSaved, m_imgSaved);
+            cv::pyrDown(scaled_image, scaled_image);
         }
         else {
-            cv::pyrDown(imgOriginal, m_imgSaved);
+            cv::pyrDown(original_image, scaled_image);
         }
     }
 }
 
-void Detector::rescale_image(cv::Mat& imgOriginal) {
-    //cv::resize(m_imgSaved, imgOriginal, cv::Size(), scale,scale);
+void Detector::rescale_image(cv::Mat& original_image) {
+    //cv::resize(m_imgSaved, original_image, cv::Size(), scale,scale);
     for (int i = 0;i < rescale_factor;i++) {
         if (i) {
-            cv::pyrUp(imgOriginal, imgOriginal);
+            cv::pyrUp(original_image, original_image);
         }
         else {
-            cv::pyrUp(m_imgSaved, imgOriginal);
+            cv::pyrUp(scaled_image, original_image);
         }
     }
-    cv::cvtColor(imgOriginal, imgOriginal, CV_RGB2BGR);
 }
 
 void Detector::update_detection_state(const Document& rectangle) {
     if (rectangle.is_valid()) {
-        m_documentDetected = true;
-        m_framesSinceDocDetected = 0;
+        num_frames_since_doc_detected = 0;
     }
     else {
-        m_documentDetected = false;
-        m_framesSinceDocDetected++;
+        num_frames_since_doc_detected++;
     }
 }
 
-bool Detector::getDocumentImage(cv::Mat& image) {
-    if (m_documentDetected || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
-        cv::Mat resized;
-        
-        m_lastRect.copyDeskewedDocument(m_imgSaved, resized);
-        cv::Size orig_size(m_imgSaved.cols, m_imgSaved.rows);
-        cv::resize(resized, image, orig_size, 0, 0, cv::INTER_LANCZOS4);
-        return true;
-    } else {
-        m_imgSaved.copyTo(image);
-        return false;
-    }
-}
-
-bool Detector::getDocumentImage(cv::Mat& srcImage, cv::Mat& destImage) {
-    if (m_documentDetected || m_framesSinceDocDetected < MAX_FAILED_DETECTIONS) {
+bool Detector::copy_deskewed_doc_region(cv::Mat& src_image, cv::Mat& dest_image)
+{
+    if (found_document()) {
         cv::Mat resized;
         
         // Scale
-        m_lastRect.rescale(srcImage);
-        m_lastRect.copyDeskewedDocument(srcImage, resized);
+        Document copy_document = detected_document;
+        copy_document.rescale(src_image);
+        copy_document.copy_deskewed_document(src_image, resized);
         
-        cv::Size orig_size(srcImage.cols, srcImage.rows);
+        cv::Size orig_size(src_image.cols, src_image.rows);
         
-        cv::resize(resized, destImage, orig_size, 0, 0, cv::INTER_LANCZOS4);
+        cv::resize(resized, dest_image, orig_size, 0, 0, cv::INTER_LANCZOS4);
         return true;
     } else {
-        destImage = srcImage;
+        dest_image = src_image;
         return false;
     }
 }
 
-void Detector::getDocumentPoints(std::vector<cv::Point>& points) const {
-    m_lastRect.getPoints(points);
+void Detector::get_document_points(std::vector<cv::Point>& points) const {
+    last_valid_document.getPoints(points);
+}
+
+bool Detector::found_document() const {
+    return (last_valid_document.is_valid() || \
+            num_frames_since_doc_detected < MAX_FAILED_DETECTIONS);
 }
 
 #endif

@@ -37,8 +37,10 @@ bool DetectionResult::compare(const Points& test_points) const {
     //   return false;
     
     for (int i = 0;i < points.size();i++) {
-        if (!points_identical(test_points[i], points[i]))
+        if (!points_identical(test_points[i], points[i])) {
+            std::cerr << points << "!=" << test_points << "\n";
             return false;
+        }
     }
     
     return true;
