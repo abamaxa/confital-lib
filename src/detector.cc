@@ -30,7 +30,7 @@ bool Detector::initialize(cv::String path_to_model)
     return true;
 }
 
-void Detector::process_image(cv::Mat& original_image, EDGE_DETECTORS edge_method)
+void Detector::process_image(cv::Mat& original_image)
 {
     cv::Mat imgResult;
 

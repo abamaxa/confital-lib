@@ -37,7 +37,7 @@ public :
         cv::Mat test_image;
         images[ordinal].copyTo(test_image);
         
-        detector.process_image(test_image, DETECTION_MODE);
+        detector.process_image(test_image);
         
         check_detection(ordinal);
         

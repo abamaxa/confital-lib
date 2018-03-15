@@ -22,7 +22,7 @@ public:
     Detector();
 
     virtual bool initialize(cv::String path_to_model);
-    virtual void process_image(cv::Mat& original_image, EDGE_DETECTORS edge_method);
+    virtual void process_image(cv::Mat& original_image);
     virtual bool found_document() const;
     virtual bool copy_deskewed_doc_region(cv::Mat& src_image, cv::Mat& dest_image);
     virtual void get_document_points(std::vector<cv::Point>& points) const;
