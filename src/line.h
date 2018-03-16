@@ -1,7 +1,8 @@
 #ifndef Line_h_included
 #define Line_h_included
 
-#import "config.h"
+#include "common.h"
+#include "config.h"
 
 class SideRecord;
 typedef std::vector<SideRecord> SideRecordVector;

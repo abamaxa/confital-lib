@@ -5,15 +5,17 @@
 #include "debug_drawings.h"
 
 void DebugDrawings::apply(PipelineJob& job) {
+#ifdef DEBUG_DRAWING
     const Document& result = job.get_result();
     if (!result.is_valid()) {
         draw_detected_lines(job);
     }
+#endif
 }
 
 void DebugDrawings::draw_detected_lines(PipelineJob& job) const
 {
-    int counter = 0;
+    size_t counter = 0;
     std::vector<Document> rectangles = job.get_rectangles();
     const LineVector& lines = job.get_lines();
     cv::Mat image = job.get_initial_image();
@@ -27,8 +29,8 @@ void DebugDrawings::draw_detected_lines(PipelineJob& job) const
         }
     }
     else if (lines.size()) {
-        cv::Scalar colours[] = {cv::Scalar(0,64,0),
-            cv::Scalar(64,0,0), cv::Scalar(0,0,64) , cv::Scalar(64,0,64)};
+        //cv::Scalar colours[] = {cv::Scalar(0,64,0),
+        //    cv::Scalar(64,0,0), cv::Scalar(0,0,64) , cv::Scalar(64,0,64)};
         
         for (;counter < lines.size();++counter)
         {

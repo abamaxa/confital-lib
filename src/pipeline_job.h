@@ -7,7 +7,9 @@
 #include "line.h"
 #include "document.h"
 
-class PipelineJob {
+typedef std::map<std::string, float> ScoreMap;
+
+class PipelineJob : public ScoreMap {
 public:
     PipelineJob(const cv::Mat& image);
     
@@ -27,9 +29,9 @@ public:
     const Document& get_result() const;
     
 private:
-    const cv::Mat& initial_image;
     cv::Mat image;
-    
+    const cv::Mat& initial_image;
+
     Document result_rectangle;
     
     LineVector line_candidates;

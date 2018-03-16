@@ -10,4 +10,17 @@
 
 #import <cmath>
 #import <algorithm>
+
+/*const int BOTTOM_SIDE = 0;
+const int TOP_SIDE    = 1;
+const int LEFT_SIDE   = 2;
+const int RIGHT_SIDE  = 3;*/
+
+const int TOP_SIDE    = 0;
+const int RIGHT_SIDE  = 1;
+const int BOTTOM_SIDE = 2;
+const int LEFT_SIDE   = 3;
+
+const int NUM_SIDES   = 4;
+
 #endif

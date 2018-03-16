@@ -7,6 +7,8 @@
 //
 
 #include "gather_lines.h"
+#include "rectangle.h"
+#include "document.h"
 
 void RectangleDetector::apply(PipelineJob& job) {
     group_parallel_and_normal_lines(job);
@@ -22,7 +24,7 @@ void RectangleDetector::group_parallel_and_normal_lines(PipelineJob& job)
     {
         Line& lineRecord = *(itr);
         
-        for (int i = counter;i < line_candidates.size();++i)
+        for (size_t i = counter;i < line_candidates.size();++i)
         {
             Line& lineRecord2 = line_candidates[i];
             // Default values match lines that do not intersect.
@@ -80,22 +82,40 @@ void RectangleDetector::generate_rectangles(PipelineJob& job)
                     const SideRecord& adjSide2 = lineRecord.m_normalSides[n];
                     const Line& nRecord2 = adjSide2.lineRecord;
                     
-                    if (&nRecord == &nRecord2) {
-                        continue;
-                    }
-                    
-                    Document rectangle(job.get_initial_image());
-                    bool possible_document = rectangle.assessRectangle(
-                        lineRecord, nRecord, pRecord, nRecord2, job.get_initial_image());
-                    
-                    if (!possible_document) {
-                        continue;
-                    }
-                    
-                    job.add_rectangle(rectangle);
+                    add_rectangle_if_valid(
+                            lineRecord, nRecord, pRecord, nRecord2, job);
                 }
             }
         }
+    }
+}
+
+void RectangleDetector::add_rectangle_if_valid
+(
+    const Line& lineRecord,
+    const Line& nRecord,
+    const Line& pRecord,
+    const Line& nRecord2,
+    PipelineJob& job
+)
+{
+    if (&nRecord == &nRecord2) {
+        return;
+    }
+    
+    Rectangle rectangle;
+    const cv::Mat& image = job.get_initial_image();
+    bool possible_document = rectangle.set(
+            lineRecord, nRecord, pRecord, nRecord2, image);
+    
+    if (!possible_document)
+        return;
+    
+    Document document;
+    possible_document = document.assess_document(rectangle, image);
+    
+    if (possible_document) {
+        job.add_rectangle(document);
     }
 }
 

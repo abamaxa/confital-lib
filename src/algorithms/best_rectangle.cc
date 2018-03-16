@@ -11,7 +11,7 @@ void BestRectangleSelector::apply(PipelineJob& job) {
     Document best_rectangle;
     std::vector<Document> rectangles = job.get_rectangles();
     
-    for(int index = 0;index < rectangles.size();++index) {
+    for(size_t index = 0;index < rectangles.size();++index) {
         float thisScore = rectangles[index].getScore();
         if (thisScore > bestScore || index == 0) {
             bestScore = thisScore;
@@ -21,8 +21,7 @@ void BestRectangleSelector::apply(PipelineJob& job) {
     
     if (bestOrdinal != -1) {
         best_rectangle = rectangles.at(bestOrdinal);
-    }
-    
-    job.set_result(best_rectangle);
+        job.set_result(best_rectangle);
+    }  
 }
 

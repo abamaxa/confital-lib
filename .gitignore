@@ -36,3 +36,8 @@ test/images_saved
 test/confital-lib-mactest/DerivedData
 test/confital-lib-mactest/confital-lib-mactest.build
 DerivedData
+
+data/images_saved/
+mac/confital-lib-mactest/confital-lib-mactest.build/
+mac/confital-lib-mactest/confital-lib-mactest.xcodeproj/xcuserdata/chris.xcuserdatad/xcschemes/
+python/

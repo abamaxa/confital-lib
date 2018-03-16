@@ -18,6 +18,15 @@ private :
     void generate_rectangles(PipelineJob& job);
     bool intersection_in_or_near_image(const PipelineJob& job, const cv::Point& intersection) const;
     
+    void add_rectangle_if_valid
+    (
+     const Line& lineRecord,
+     const Line& nRecord,
+     const Line& pRecord,
+     const Line& nRecord2,
+     PipelineJob& job
+    );
+    
     LineVector selectedCandidates;
 };
 
