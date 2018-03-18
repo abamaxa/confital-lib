@@ -140,9 +140,8 @@ bool Document::internal_angles_within_bounds() const {
     // point (0,0), the gradiants are +/- pi / 2
     const float MAX_ANGLE = M_PI * 0.51;
     int count_outside_limit = 0;
-    std::vector<float>::const_iterator itr = internal_angles.begin();
-    for (;itr != internal_angles.end();++itr) {
-        if (*itr > MAX_ANGLE)
+    for (const auto& angle : internal_angles) {
+        if (angle > MAX_ANGLE)
             count_outside_limit++;
     }
     
@@ -238,16 +237,16 @@ void Document::copy_deskewed_document(const cv::Mat& image, cv::Mat& output) con
     // (i.e. top-down view) of the image, again specifying points
     // in the top-left, top-right, bottom-right, and bottom-left
     // order
-    const std::vector<cv::Point>& corners = rectangle.get_points();
+    const Points& corners = rectangle.get_points();
     
     cv::Mat matPoints;
     cv::Point2f points[NUM_SIDES];
     
     assert(corners.size() == NUM_SIDES);
-    
-    for (size_t i = 0;i < NUM_SIDES;i++) {
-        points[i] = corners.at(i);
-        matPoints.push_back(corners.at(i));
+    size_t i = 0;
+    for (const auto& corner : corners) {
+        points[i++] = corner;
+        matPoints.push_back(corner);
     }
 
     // obtain a consistent order of the points and unpack them
@@ -270,7 +269,7 @@ void Document::copy_deskewed_document(const cv::Mat& image, cv::Mat& output) con
             cv::Size(box.boundingRect().width, box.boundingRect().height));
 }
 
-const std::vector<cv::Point>& Document::get_points() const {
+const Points& Document::get_points() const {
     return rectangle.get_points();
 }
 

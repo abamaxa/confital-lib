@@ -14,6 +14,10 @@
 class AbstractAlgorithm {
 public:
     virtual void apply(PipelineJob& job) = 0;
+    virtual const char* get_name() = 0;
+    virtual bool load(std::string path_to_model) {
+        return true;
+    };
 };
 
 #endif /* abstract_algorithm_h */

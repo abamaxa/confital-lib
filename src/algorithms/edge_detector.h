@@ -9,10 +9,16 @@
 
 typedef cv::Ptr<cv::ximgproc::StructuredEdgeDetection> StructuredEdgeDetection;
 
+const char* const TREE_DETECTOR = "Tree Edge Detector";
+const char* const CANNY_DETECTOR = "Canny Edge Detector";
+
 class TreesEdgeDetector : public AbstractAlgorithm {
 public:
-    TreesEdgeDetector(StructuredEdgeDetection& edge_detector);
+    TreesEdgeDetector();
     virtual void apply(PipelineJob& job);
+    virtual const char* get_name() { return TREE_DETECTOR; }
+    
+    virtual bool load(std::string path_to_model);
     
 private:
     StructuredEdgeDetection edge_detector;
@@ -21,6 +27,7 @@ private:
 class CannyEdgeDetector : public AbstractAlgorithm {
 public:
     virtual void apply(PipelineJob& job);
+    virtual const char* get_name() { return CANNY_DETECTOR; }
 };
 
 #endif /* edge_detector_hpp */

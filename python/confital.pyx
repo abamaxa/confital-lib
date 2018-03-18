@@ -4,7 +4,7 @@
 
 import numpy as np
 from PIL import Image
-
+ 
 cimport numpy as np # for np.ndarray
 from libcpp.string cimport string
 from libc.string cimport memcpy

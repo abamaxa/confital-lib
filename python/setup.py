@@ -18,10 +18,13 @@ sourcefiles = [
 "../src/algorithms/best_rectangle.cc",
 "../src/algorithms/line_detector.cc",
 "../src/algorithms/debug_drawings.cc",
+"../src/algorithms/rectangle_detector.cc",
+"../src/algorithms/text_detector.cc",
 "../src/rectangle.cc",
 "../src/document.cc",
 "../src/line.cc",
-"../src/detector.cc"
+"../src/detector.cc",
+"../src/line_group.cc"
 ]
 
 libraries = [
@@ -43,7 +46,10 @@ extensions = [
         include_dirs = include,
         language="c++",
         libraries = libraries,
-        library_dirs = ["/usr/local/lib"]),
+        library_dirs = ["/usr/local/lib"],
+        extra_compile_args = ["-std=c++14"],
+        extra_link_args = ["-std=c++14"]        
+    ),
 ]
 setup(
     name = "Confital",

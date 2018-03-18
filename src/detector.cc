@@ -20,28 +20,50 @@ Detector::Detector() :
 Detector::~Detector() {
 }
 
-void Detector::initialize(cv::String path_to_model) {
-    edge_detector = cv::ximgproc::createStructuredEdgeDetection(path_to_model);
+void Detector::assemble_default_pipeline() {
+    pipeline.clear();
+    
+    pipeline.push_back(std::make_shared<CannyEdgeDetector>());
+    //pipeline.push_back(Algorithm(new TreesEdgeDetector()));
+    pipeline.push_back(Algorithm(new LineDetector()));
+    pipeline.push_back(Algorithm(new LineGatherer()));
+    pipeline.push_back(Algorithm(new RectangleDetector()));
+    pipeline.push_back(Algorithm(new BestRectangleSelector()));
+#ifdef DEBUG_DRAWING
+    pipeline.push_back(Algorithm(new DebugDrawings()));
+#endif
+    
+    load_algorithm_models();
+}
+
+void Detector::load_algorithm_models() {
+    for (auto algorithm : pipeline) {
+        auto itr = model_paths.find(algorithm->get_name());
+        if (itr != model_paths.end())
+            algorithm->load((*itr).second);
+    }
+}
+
+void Detector::add_pipeline_stage(Algorithm algorithm) {
+    pipeline.push_back(algorithm);
+}
+
+void Detector::set_model_filepath(std::string model_name, std::string path) {
+    model_paths.insert({model_name, path});
 }
 
 void Detector::process_image(cv::Mat& original_image) {
-    CannyEdgeDetector canny_detector;
-    TreesEdgeDetector trees_detector(edge_detector);
-    LineDetector line_detector;
-    RectangleDetector rectangle_detector;
-    BestRectangleSelector rectangle_selector;
-    DebugDrawings debug_detections;
-    
     calculate_rescale_factor(original_image);
     scale_image(original_image);
     
     PipelineJob job(scaled_image);
     
-    canny_detector.apply(job);
-    line_detector.apply(job);
-    rectangle_detector.apply(job);
-    rectangle_selector.apply(job);
-    debug_detections.apply(job);
+    if (!pipeline.size())
+        assemble_default_pipeline();
+    
+    for (auto algorithm : pipeline) {
+        algorithm->apply(job);
+    }
 
     update_detection_state(job.get_result());
     update_last_detected_document(original_image);
@@ -104,8 +126,8 @@ void Detector::copy_deskewed_doc_region(cv::Mat& src_image, cv::Mat& dest_image)
     } 
 }
 
-void Detector::get_document_points(std::vector<cv::Point>& points) const {
-    const std::vector<cv::Point>& doc_points = most_recent_detected_document.get_points();
+void Detector::get_document_points(Points& points) const {
+    const Points& doc_points = most_recent_detected_document.get_points();
     points.clear();
     points.insert(points.begin(), doc_points.begin(), doc_points.end());
 }

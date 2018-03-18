@@ -29,6 +29,8 @@
 		83A59808205C3BD5005A98C4 /* libopencv_dnn.3.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A59801205C3BD5005A98C4 /* libopencv_dnn.3.4.1.dylib */; };
 		83A59809205C3BD5005A98C4 /* libopencv_text.3.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A59802205C3BD5005A98C4 /* libopencv_text.3.4.1.dylib */; };
 		83A5980A205C3BD5005A98C4 /* libopencv_imgproc.3.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A59803205C3BD5005A98C4 /* libopencv_imgproc.3.4.1.dylib */; };
+		83A76772205E852A006F8BAD /* rectangle_detector.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A76770205E852A006F8BAD /* rectangle_detector.cc */; };
+		83A76775205E87E9006F8BAD /* line_group.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83A76773205E87E9006F8BAD /* line_group.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -86,6 +88,10 @@
 		83A59801205C3BD5005A98C4 /* libopencv_dnn.3.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_dnn.3.4.1.dylib; path = ../../../../../../../usr/local/lib/libopencv_dnn.3.4.1.dylib; sourceTree = "<group>"; };
 		83A59802205C3BD5005A98C4 /* libopencv_text.3.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_text.3.4.1.dylib; path = ../../../../../../../usr/local/lib/libopencv_text.3.4.1.dylib; sourceTree = "<group>"; };
 		83A59803205C3BD5005A98C4 /* libopencv_imgproc.3.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.4.1.dylib; path = ../../../../../../../usr/local/lib/libopencv_imgproc.3.4.1.dylib; sourceTree = "<group>"; };
+		83A76770205E852A006F8BAD /* rectangle_detector.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rectangle_detector.cc; path = ../../src/algorithms/rectangle_detector.cc; sourceTree = "<group>"; };
+		83A76771205E852A006F8BAD /* rectangle_detector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rectangle_detector.h; path = ../../src/algorithms/rectangle_detector.h; sourceTree = "<group>"; };
+		83A76773205E87E9006F8BAD /* line_group.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = line_group.cc; path = ../../src/line_group.cc; sourceTree = "<group>"; };
+		83A76774205E87E9006F8BAD /* line_group.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = line_group.h; path = ../../src/line_group.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +177,8 @@
 				83A597F8205C2520005A98C4 /* object_detector.h */,
 				83A597FA205C2600005A98C4 /* text_detector.cc */,
 				83A597FB205C2600005A98C4 /* text_detector.h */,
+				83A76770205E852A006F8BAD /* rectangle_detector.cc */,
+				83A76771205E852A006F8BAD /* rectangle_detector.h */,
 			);
 			name = algorithms;
 			sourceTree = "<group>";
@@ -190,6 +198,8 @@
 				83A597DF20595CD3005A98C4 /* pipeline_job.h */,
 				83A597F1205AC40E005A98C4 /* rectangle.cc */,
 				83A597F2205AC40E005A98C4 /* rectangle.h */,
+				83A76773205E87E9006F8BAD /* line_group.cc */,
+				83A76774205E87E9006F8BAD /* line_group.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -256,6 +266,7 @@
 				83A597CA20595BAC005A98C4 /* edge_detector.cc in Sources */,
 				83A597F3205AC40E005A98C4 /* rectangle.cc in Sources */,
 				83A597FC205C2600005A98C4 /* text_detector.cc in Sources */,
+				83A76772205E852A006F8BAD /* rectangle_detector.cc in Sources */,
 				83A597E320595CD3005A98C4 /* line.cc in Sources */,
 				83A597E72059824B005A98C4 /* gather_lines.cc in Sources */,
 				83A597F9205C2520005A98C4 /* object_detector.cc in Sources */,
@@ -263,6 +274,7 @@
 				83A597F020599A97005A98C4 /* debug_drawings.cc in Sources */,
 				83A597AB205952C2005A98C4 /* detection_results.cc in Sources */,
 				83A597F6205C24F2005A98C4 /* text_deskew.cc in Sources */,
+				83A76775205E87E9006F8BAD /* line_group.cc in Sources */,
 				83A597E220595CD3005A98C4 /* document.cc in Sources */,
 				837FEF82200FAC84006C06EB /* main.cpp in Sources */,
 				83A597ED20599A5D005A98C4 /* best_rectangle.cc in Sources */,

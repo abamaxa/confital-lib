@@ -1,16 +1,6 @@
-//  Created by Chris Morgan on 15/3/18.
-//  Copyright © 2018 Chris Morgan. All rights reserved.
-//
-
 #include "rectangle.h"
 
-const int TOP_LEFT = 0;
-const int TOP_RIGHT = 1;
-const int BOTTOM_RIGHT = 2;
-const int BOTTOM_LEFT = 3;
-const int UNMATCHED = -1;
-
-int find_side(const Line** lines, cv::Point* points, cv::Point corner1, cv::Point corner2);
+int find_side(cv::Point* points, cv::Point corner1, cv::Point corner2);
 
 Rectangle::Rectangle() :
     image_width(0),
@@ -26,55 +16,33 @@ void Rectangle::reset() {
     angles.resize(NUM_SIDES);
 }
 
-bool Rectangle::set
-(
-    const Line& principle,
-    const Line& normal1,
-    const Line& opposite,
-    const Line& normal2,
-    const cv::Mat& image
-)
-{
+bool Rectangle::set(LineVector& lines, const cv::Mat& image) {
     image_width = image.cols;
     image_height = image.rows;
     
-    const Line* lines[] = {&principle, &normal1, &opposite, &normal2};
     if (!calculate_intersections(lines))
         return false;
     
     if (!are_lines_within_corners(lines))
         return false;
-
+    
     if (!intersections_are_close())
         return false;
     
     set_angles(lines);
-    
     return true;
 }
 
-bool Rectangle::calculate_intersections(const Line** lines) {
+bool Rectangle::calculate_intersections(LineVector& lines) {
     cv::Point points[4];
     
-    lines[0]->find_intersection(*lines[1], points[0]);
-    lines[0]->find_intersection(*lines[3], points[1]);
-    lines[2]->find_intersection(*lines[1], points[2]);
-    lines[2]->find_intersection(*lines[3], points[3]);
+    lines[0].find_intersection(lines[1], points[0]);
+    lines[0].find_intersection(lines[3], points[1]);
+    lines[2].find_intersection(lines[1], points[2]);
+    lines[2].find_intersection(lines[3], points[3]);
     
     set_corners(points);
     return order_lines(lines, points);
-}
-
-bool compare_y(cv::Point& a, cv::Point& b) {
-    return a.y < b.y;
-}
-
-bool compare_x_top(cv::Point& a, cv::Point& b) {
-    return a.x < b.x;
-}
-
-bool compare_x_bottom(cv::Point& a, cv::Point& b) {
-    return a.x > b.x;
 }
 
 void Rectangle::set_corners(cv::Point* original_points) {
@@ -82,36 +50,40 @@ void Rectangle::set_corners(cv::Point* original_points) {
     assert(corners.size() == NUM_SIDES);
     std::copy(original_points, original_points + NUM_SIDES, corners.begin());
     
-    std::sort(corners.begin(), corners.end(), compare_y);
+    std::sort(corners.begin(),corners.end(),[](cv::Point& a,cv::Point& b) {
+        return a.y < b.y;
+    });
     
     // top most
-    std::sort(corners.begin(), corners.begin() + 2, compare_x_top);
+    std::sort(corners.begin(),corners.begin()+2,[](cv::Point& a,cv::Point& b) {
+        return a.x < b.x;
+    });
     
     // bottom most
-    std::sort(corners.begin() + 2, corners.end(), compare_x_bottom);
+    std::sort(corners.begin() + 2, corners.end(),[](cv::Point& a,cv::Point& b) {
+        return a.x > b.x;
+    });
 }
 
-bool Rectangle::order_lines(const Line** lines, cv::Point* points) {
-    const Line* ordered[NUM_SIDES];
+bool Rectangle::order_lines(LineVector& lines, cv::Point* points) {
+    LineVector ordered;
 
     for (size_t side = 0;side < NUM_SIDES;side++) {
         const cv::Point& corner1 = corners[side];
         const cv::Point& corner2 = corners[(side + 1) % NUM_SIDES];
 
-        int position = find_side(lines, points, corner1, corner2);
+        int position = find_side(points, corner1, corner2);
         if (position == UNMATCHED)
             return false;
         
-        ordered[side] = lines[position];
+        ordered.push_back(lines[position]);
     }
     
-    memcpy(lines, ordered, sizeof(ordered));
+    std::copy(ordered.begin(), ordered.end(), lines.begin());
     return true;
 }
 
-int find_side(const Line** lines, cv::Point* points, cv::Point corner1, cv::Point corner2)
-{
-    
+int find_side(cv::Point* points, cv::Point corner1, cv::Point corner2) {
     int side_matching_corner1_x = UNMATCHED;
     int side_matching_corner2_x = UNMATCHED;
     int side_matching_corner1_y = UNMATCHED;
@@ -144,8 +116,8 @@ int find_side(const Line** lines, cv::Point* points, cv::Point corner1, cv::Poin
 }
 
 bool Rectangle::intersections_are_close() const {
-    for (size_t i = 0;i < NUM_SIDES;i++) {
-        if (!intersection_in_or_near_image(corners.at(i)))
+    for (const auto& corner : corners) {
+        if (!intersection_in_or_near_image(corner))
             return false;
     }
 
@@ -163,33 +135,18 @@ bool Rectangle::intersection_in_or_near_image(const cv::Point& intersection) con
             (intersection.y >= y1 && intersection.y <= y2));
 }
 
-bool Rectangle::are_lines_within_corners(const Line** lines) const {
-    int min_x = std::min(corners[TOP_LEFT].x, corners[BOTTOM_LEFT].x);
-    int max_x = std::max(corners[TOP_RIGHT].x, corners[BOTTOM_RIGHT].x);
-    int min_y = std::min(corners[TOP_LEFT].y, corners[TOP_RIGHT].y);
-    int max_y = std::max(corners[BOTTOM_LEFT].y, corners[BOTTOM_RIGHT].y);
-    
-    for (int i = 0;i < NUM_SIDES;i++) {
-        if (std::max(lines[i]->m_pt1.x, lines[i]->m_pt2.x) < min_x)
-            return false;
-        
-        if (std::min(lines[i]->m_pt1.x, lines[i]->m_pt2.x) > max_x)
-            return false;
-        
-        if (std::max(lines[i]->m_pt1.y, lines[i]->m_pt2.y) < min_y)
-            return false;
-        
-        if (std::min(lines[i]->m_pt1.y, lines[i]->m_pt2.y) > max_y)
+bool Rectangle::are_lines_within_corners(const LineVector& lines) const {
+    for (const auto& line : lines) {
+        if (!line.inside_rectangle(corners))
             return false;
     }
-    
     return true;
 }
 
-void Rectangle::set_angles(const Line** lines) {
+void Rectangle::set_angles(const LineVector& lines) {
     angles.clear();
-    for (size_t side = 0;side < NUM_SIDES;side++) {
-        angles.push_back(lines[side]->m_angle);
+    for (const auto& line : lines) {
+        angles.push_back(line.get_angle());
     }
 }
 
@@ -201,16 +158,16 @@ void Rectangle::rescale(const cv::Mat& image) {
     float x_scale = float(image.cols) / float(image_width);
     float y_scale = float(image.rows) / float(image_height);
     
-    for (size_t i = 0;i < NUM_SIDES;i++) {
-        corners[i].x *= x_scale;
-        corners[i].y *= y_scale;
+    for (auto& corner : corners) {
+        corner.x *= x_scale;
+        corner.y *= y_scale;
     }
     
     image_width = image.cols;
     image_height = image.rows;
 }
 
-const std::vector<cv::Point>& Rectangle::get_points() const {
+const Points& Rectangle::get_points() const {
     return corners;
 }
 

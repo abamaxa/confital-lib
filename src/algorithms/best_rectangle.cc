@@ -15,7 +15,7 @@ void BestRectangleSelector::apply(PipelineJob& job) {
         float thisScore = rectangles[index].getScore();
         if (thisScore > bestScore || index == 0) {
             bestScore = thisScore;
-            bestOrdinal = index;
+            bestOrdinal = static_cast<int>(index);
         }
     }
     

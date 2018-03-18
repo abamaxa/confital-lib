@@ -1,137 +1,31 @@
-//
-//  gather_lines.cpp
-//  confital-lib-mactest
-//
 //  Created by Chris Morgan on 14/3/18.
 //  Copyright © 2018 Chris Morgan. All rights reserved.
-//
 
 #include "gather_lines.h"
-#include "rectangle.h"
-#include "document.h"
 
-void RectangleDetector::apply(PipelineJob& job) {
-    group_parallel_and_normal_lines(job);
-    generate_rectangles(job);
-}
+bool line_in_existing_group(ApproxParallelLineGroup groups, const Line& line);
 
-void RectangleDetector::group_parallel_and_normal_lines(PipelineJob& job)
-{
-    int counter = 0;
-    LineVector& line_candidates = job.get_lines();
-    for (LineVector::iterator itr = line_candidates.begin();
-         itr != line_candidates.end();++itr)
-    {
-        Line& lineRecord = *(itr);
+void LineGatherer::apply(PipelineJob& job) {
+    LineVector& lines = job.get_lines();
+    ApproxParallelLineGroup groups;
+    
+    for (auto& line : lines) {
+        if (line_in_existing_group(groups, line))
+            continue;
         
-        for (size_t i = counter;i < line_candidates.size();++i)
-        {
-            Line& lineRecord2 = line_candidates[i];
-            // Default values match lines that do not intersect.
-            if (&lineRecord2 == &lineRecord) {
-                continue;
-            }
-            
-            float angle = fabs(lineRecord.m_angle - lineRecord2.m_angle);
-            bool isSimilarGrad = (angle < M_PI * 0.1 || angle > M_PI * 0.9);
-            bool isApproxNormal = (angle < M_PI * 0.6 && angle > M_PI * 0.4);
-            
-            if (isSimilarGrad) {
-                lineRecord.m_parallelSides.push_back(SideRecord(lineRecord2, angle));
-            }
-            else if (isApproxNormal) {
-                cv::Point intersection;
-                lineRecord.find_intersection(lineRecord2, intersection);
-                if (intersection_in_or_near_image(job, intersection))
-                    lineRecord.m_normalSides.push_back(SideRecord(lineRecord2, angle));
-            }
-        }
+        ApproxParallelLines group(line);
         
-        if (lineRecord.m_parallelSides.size() && lineRecord.m_normalSides.size() >= 2) {
-            selectedCandidates.push_back(lineRecord);
+        group.add_all_approx_parallel_lines(lines);
+        groups.push_back(group);
+    }
+    
+    job.set_parallel_line_groups(groups);
+}
+
+bool line_in_existing_group(ApproxParallelLineGroup groups, const Line& line) {
+    return std::any_of(groups.begin(), groups.end(),
+        [line](const ApproxParallelLines& group) {
+            return group.line_in_group(line);
         }
-    }
+    );
 }
-
-void RectangleDetector::generate_rectangles(PipelineJob& job)
-{
-    for (LineVector::const_iterator itr = selectedCandidates.begin();
-         itr != selectedCandidates.end();++itr)
-    {
-        const Line& lineRecord = *(itr);
-        /* Iterate through possible sides and make combinations of
-         one side with appprox same gradiant and two normals.
-         Select using approx equal sides.
-         Then do histrogram of enclosed rect to check it looks like paper.
-         
-         Decide final selection criteria - largest, strongest lines? Favor first
-         found greater than approx 1/3 image size, otherwise largest found?
-         */
-        for (SideRecordVector::const_iterator pitr = lineRecord.m_parallelSides.begin();
-             pitr != lineRecord.m_parallelSides.end();++pitr)
-        {
-            const SideRecord& oppositeSide = *(pitr);
-            const Line& pRecord = oppositeSide.lineRecord;
-            for (size_t i = 0;i < lineRecord.m_normalSides.size() - 1;++i)
-            {
-                const SideRecord& adjSide1 = lineRecord.m_normalSides[i];
-                const Line& nRecord = adjSide1.lineRecord;
-                
-                for (size_t n = 1;n < lineRecord.m_normalSides.size();++n)
-                {
-                    const SideRecord& adjSide2 = lineRecord.m_normalSides[n];
-                    const Line& nRecord2 = adjSide2.lineRecord;
-                    
-                    add_rectangle_if_valid(
-                            lineRecord, nRecord, pRecord, nRecord2, job);
-                }
-            }
-        }
-    }
-}
-
-void RectangleDetector::add_rectangle_if_valid
-(
-    const Line& lineRecord,
-    const Line& nRecord,
-    const Line& pRecord,
-    const Line& nRecord2,
-    PipelineJob& job
-)
-{
-    if (&nRecord == &nRecord2) {
-        return;
-    }
-    
-    Rectangle rectangle;
-    const cv::Mat& image = job.get_initial_image();
-    bool possible_document = rectangle.set(
-            lineRecord, nRecord, pRecord, nRecord2, image);
-    
-    if (!possible_document)
-        return;
-    
-    Document document;
-    possible_document = document.assess_document(rectangle, image);
-    
-    if (possible_document) {
-        job.add_rectangle(document);
-    }
-}
-
-bool RectangleDetector::intersection_in_or_near_image
-(
-    const PipelineJob& job,
-    const cv::Point& intersection
-) const
-{
-    int x1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
-    int y1 = -MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
-    int x2 = job.image_width() + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
-    int y2 = job.image_height() + MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE;
-    
-    return ((intersection.x >= x1 && intersection.x <= x2) &&
-            (intersection.y >= y1 && intersection.y <= y2));
-}
-
-

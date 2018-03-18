@@ -7,27 +7,15 @@
 
 #include "common.h"
 #include "line.h"
+#include "line_group.h"
 #include "abstract_algorithm.h"
 
-class RectangleDetector : public AbstractAlgorithm {
+const char* const LINE_GATHER = "Line Gather";
+
+class LineGatherer : public AbstractAlgorithm {
 public:
     virtual void apply(PipelineJob& job);
-    
-private :
-    void group_parallel_and_normal_lines(PipelineJob& job);
-    void generate_rectangles(PipelineJob& job);
-    bool intersection_in_or_near_image(const PipelineJob& job, const cv::Point& intersection) const;
-    
-    void add_rectangle_if_valid
-    (
-     const Line& lineRecord,
-     const Line& nRecord,
-     const Line& pRecord,
-     const Line& nRecord2,
-     PipelineJob& job
-    );
-    
-    LineVector selectedCandidates;
+    virtual const char* get_name() { return LINE_GATHER; }
 };
 
 

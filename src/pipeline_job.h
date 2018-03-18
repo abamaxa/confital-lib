@@ -5,9 +5,10 @@
 
 #include "common.h"
 #include "line.h"
+#include "line_group.h"
 #include "document.h"
 
-typedef std::map<std::string, float> ScoreMap;
+typedef std::unordered_map<std::string, float> ScoreMap;
 
 class PipelineJob : public ScoreMap {
 public:
@@ -18,6 +19,9 @@ public:
     
     cv::Mat& get_image();
     const cv::Mat& get_initial_image() const;
+    
+    void set_parallel_line_groups(const ApproxParallelLineGroup& groups);
+    const ApproxParallelLineGroup& get_parallel_line_groups() const;
     
     LineVector& get_lines();
     void add_line(const Line& line);
@@ -35,6 +39,7 @@ private:
     Document result_rectangle;
     
     LineVector line_candidates;
+    ApproxParallelLineGroup groups;
     std::vector<Document> rectangles;
 };
 

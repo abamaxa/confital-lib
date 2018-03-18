@@ -8,9 +8,12 @@
 #include "common.h"
 #include "abstract_algorithm.h"
 
+const char* const DRAW_DEBUG_LINES = "Debug Lines";
+
 class DebugDrawings : public AbstractAlgorithm {
 public:
     virtual void apply(PipelineJob& job);
+    virtual const char* get_name() { return DRAW_DEBUG_LINES; }
     
 private :
     void draw_detected_lines(PipelineJob& job) const;

@@ -12,9 +12,12 @@
 #include "common.h"
 #include "abstract_algorithm.h"
 
+const char* const BEST_RECTANGLE = "Best Rectangle";
+
 class BestRectangleSelector : public AbstractAlgorithm {
 public:
     virtual void apply(PipelineJob& job);
+    virtual const char* get_name() { return BEST_RECTANGLE; }
 };
 
 #endif /* best_rectangle_hpp */

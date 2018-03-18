@@ -29,13 +29,11 @@ void DebugDrawings::draw_detected_lines(PipelineJob& job) const
         }
     }
     else if (lines.size()) {
-        //cv::Scalar colours[] = {cv::Scalar(0,64,0),
-        //    cv::Scalar(64,0,0), cv::Scalar(0,0,64) , cv::Scalar(64,0,64)};
+        cv::Scalar colours[] = {cv::Scalar(0,64,0),
+            cv::Scalar(64,0,0), cv::Scalar(0,0,64) , cv::Scalar(64,0,64)};
         
-        for (;counter < lines.size();++counter)
-        {
-            lines[counter].debugDraw(image);
-            //lines[counter].draw(image, colours[(counter / 4) % 4]);
+        for (;counter < lines.size();++counter) {
+            lines[counter].draw(image, colours[(counter / 4) % 4]);
         }
     }
 }

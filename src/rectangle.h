@@ -8,17 +8,24 @@
 #include "common.h"
 #include "config.h"
 #include "line.h"
+#include "line_group.h"
+
+const int TOP_SIDE    = 0;
+const int RIGHT_SIDE  = 1;
+const int BOTTOM_SIDE = 2;
+const int LEFT_SIDE   = 3;
+
+const int NUM_SIDES   = 4;
 
 class Rectangle {
 public:
     Rectangle();
-    bool set(const Line& principle, const Line& normal1, const Line& opposite,
-        const Line& normal2, const cv::Mat& image);
+    bool set(LineVector& lines,const cv::Mat& image);
     
     void reset();
     void rescale(const cv::Mat& image);
     void draw(cv::Mat& image, const cv::Scalar& color) const;
-    const std::vector<cv::Point>& get_points() const;
+    const Points& get_points() const;
     
     float get_top_length() const;
     float get_bottom_length() const;
@@ -31,17 +38,17 @@ public:
     float get_angle_between_left_right_sides() const;
     
 private:
-    bool calculate_intersections(const Line** lines);
+    bool calculate_intersections(LineVector& lines);
     bool intersections_are_close() const ;
     bool intersection_in_or_near_image(const cv::Point& intersection) const;
-    bool are_lines_within_corners(const Line** lines) const;
+    bool are_lines_within_corners(const LineVector& lines) const;
     void calculate_side_lengths();
-    void set_angles(const Line** lines);
+    void set_angles(const LineVector& lines);
     void set_corners(cv::Point* points);
-    bool order_lines(const Line** lines, cv::Point* points);
+    bool order_lines(LineVector& lines, cv::Point* points);
     float distance_points(const cv::Point& pt1, const cv::Point& pt2) const;
     
-    std::vector<cv::Point> corners;
+    Points corners;
     std::vector<float> angles;
     int image_width;
     int image_height;

@@ -9,15 +9,13 @@
 #ifndef detection_results_hpp
 #define detection_results_hpp
 
-#include <opencv2/opencv.hpp>
+#include "common.h"
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
 
 #include "constants.h"
-
-typedef std::vector<cv::Point> Points;
 
 class DetectionResult {
 public:

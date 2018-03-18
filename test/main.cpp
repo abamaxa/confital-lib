@@ -6,21 +6,15 @@
 //  Copyright © 2018 Chris Morgan. All rights reserved.
 //
 
-// Example showing how to read and write images
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
 #include "detection_results.h"
 #include "detector.h"
 #include "constants.h"
-
-//#define DETECTION_MODE MT_EDGE_DETECT_TREES
-#define DETECTION_MODE MT_EDGE_DETECT_CANNY
 
 class Test {
 public :
     Test(bool _save_images) : fails(0), save_images(_save_images) {
         load_images();
-        detector.initialize(MODEL_FILE);
+        detector.set_model_filepath(TREE_DETECTOR, MODEL_FILE);
     }
     
     void test_all() {

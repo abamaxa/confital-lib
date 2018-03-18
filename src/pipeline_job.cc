@@ -21,10 +21,15 @@ cv::Mat& PipelineJob::get_image() {
     return image;
 }
 
-void PipelineJob::add_line(const Line& line) {
-    if (!line.is_similar_line(line_candidates, image_width(), image_height())) {
-        line_candidates.push_back(line);
+void PipelineJob::add_line(const Line& candidate) {
+    cv::Rect image_bounds(0, 0, image_width(), image_height());
+    
+    for (const auto& line : line_candidates) {
+        if (line.is_similar_line(candidate, image_bounds))
+            return;
     }
+    
+    line_candidates.push_back(candidate);
 }
 
 LineVector& PipelineJob::get_lines() {
@@ -50,5 +55,15 @@ void PipelineJob::set_result(const Document& rectangle) {
 const Document& PipelineJob::get_result() const {
     return result_rectangle;
 }
+
+void PipelineJob::set_parallel_line_groups(const ApproxParallelLineGroup& _grps)
+{
+    groups = _grps;
+}
+
+const ApproxParallelLineGroup& PipelineJob::get_parallel_line_groups() const {
+    return groups;
+}
+
 
 

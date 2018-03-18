@@ -8,8 +8,7 @@
 
 #include "edge_detector.h"
 
-void CannyEdgeDetector::apply(PipelineJob& job)
-{
+void CannyEdgeDetector::apply(PipelineJob& job) {
     cv::Mat& image = job.get_image();
     cv::Mat image_gray;
     
@@ -18,14 +17,13 @@ void CannyEdgeDetector::apply(PipelineJob& job)
     cv::Canny(image_gray, image, 75, 200);
 }
 
-TreesEdgeDetector::TreesEdgeDetector(StructuredEdgeDetection& _edge_detector)
-: edge_detector(_edge_detector)
-{
+TreesEdgeDetector::TreesEdgeDetector() {
     
 }
 
-void TreesEdgeDetector::apply(PipelineJob& job)
-{
+void TreesEdgeDetector::apply(PipelineJob& job) {
+    assert(edge_detector);
+    
     cv::Mat imgTemp, image_CV_32FC3;
     cv::Mat& image = job.get_image();
     
@@ -50,4 +48,12 @@ void TreesEdgeDetector::apply(PipelineJob& job)
     edge_nms.convertTo(image, CV_8UC1, 255.);
 }
 
+bool TreesEdgeDetector::load(std::string path_to_model) {
+    if (path_to_model.size()) {
+        cv::String path(path_to_model);
+        edge_detector = cv::ximgproc::createStructuredEdgeDetection(path);
+    }
+    
+    return (edge_detector != nullptr);
+}
 

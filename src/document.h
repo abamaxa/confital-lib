@@ -21,7 +21,7 @@ public:
     void rescale(const cv::Mat& image);
 
     void draw(cv::Mat& image, const cv::Scalar& color) const;
-    const std::vector<cv::Point>& get_points() const;
+    const Points& get_points() const;
     void copy_deskewed_document(const cv::Mat& image, cv::Mat& output) const;
 
     float getScore() const;
