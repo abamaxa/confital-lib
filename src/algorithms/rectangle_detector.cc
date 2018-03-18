@@ -1,10 +1,5 @@
-//
-//  rectangle_detector.cpp
-//  confital-lib-mactest
-//
 //  Created by Chris Morgan on 18/3/18.
 //  Copyright © 2018 Chris Morgan. All rights reserved.
-//
 
 #include "rectangle_detector.h"
 #include "rectangle.h"

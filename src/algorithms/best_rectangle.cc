@@ -12,7 +12,7 @@ void BestRectangleSelector::apply(PipelineJob& job) {
     std::vector<Document> rectangles = job.get_rectangles();
     
     for(size_t index = 0;index < rectangles.size();++index) {
-        float thisScore = rectangles[index].getScore();
+        float thisScore = rectangles[index].get_score();
         if (thisScore > bestScore || index == 0) {
             bestScore = thisScore;
             bestOrdinal = static_cast<int>(index);

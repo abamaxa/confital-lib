@@ -1,10 +1,5 @@
-//
-//  detection_results.hpp
-//  confital-lib-mactest
-//
 //  Created by Chris Morgan on 14/3/18.
 //  Copyright © 2018 Chris Morgan. All rights reserved.
-//
 
 #ifndef detection_results_hpp
 #define detection_results_hpp

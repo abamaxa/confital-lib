@@ -24,9 +24,7 @@ const size_t MAX_NUM_HOUGH_LINES_TO_DETECT = 16;
 const size_t MAX_NUM_HOUGH_P_LINES_TO_DETECT = 32;
 const int MAX_INTERSECTION_DISTANCE_OUTSIDE_IMAGE = 16;
 
-
 const int NUM_HISTOGRAM_BINS = 4;
 
-#define DEBUG_DRAWING
 
 #endif /* MTConfig_h */

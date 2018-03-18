@@ -23,6 +23,7 @@ public:
     Detector();
     virtual ~Detector();
     
+    void set_debug_show_detected_lines(bool show);
     virtual void set_model_filepath(std::string model_name, std::string path);
     virtual void add_pipeline_stage(Algorithm algorithm);
     virtual void process_image(cv::Mat& original_image);
@@ -50,6 +51,7 @@ private:
     Document most_recent_detected_document;
     int num_frames_since_doc_detected;
     int rescale_factor;
+    bool show_detected_lines;
 };
 
 #endif /* __cplusplus */

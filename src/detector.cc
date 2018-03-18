@@ -13,25 +13,30 @@ const int INITIAL_FRAMES_SINCE_DETECTED_DOC_BIG_NUM = 10000;
 Detector::Detector() :
     frame_counter(0),
     num_frames_since_doc_detected(INITIAL_FRAMES_SINCE_DETECTED_DOC_BIG_NUM),
-    rescale_factor(1)
+    rescale_factor(1),
+    show_detected_lines(false)
 {
 }
 
 Detector::~Detector() {
 }
 
+void Detector::set_debug_show_detected_lines(bool show) {
+    show_detected_lines = show;
+}
+
 void Detector::assemble_default_pipeline() {
     pipeline.clear();
     
     pipeline.push_back(std::make_shared<CannyEdgeDetector>());
-    //pipeline.push_back(Algorithm(new TreesEdgeDetector()));
-    pipeline.push_back(Algorithm(new LineDetector()));
-    pipeline.push_back(Algorithm(new LineGatherer()));
-    pipeline.push_back(Algorithm(new RectangleDetector()));
-    pipeline.push_back(Algorithm(new BestRectangleSelector()));
-#ifdef DEBUG_DRAWING
-    pipeline.push_back(Algorithm(new DebugDrawings()));
-#endif
+    //pipeline.push_back(std::make_shared<TreesEdgeDetector>());
+    pipeline.push_back(std::make_shared<LineDetector>());
+    pipeline.push_back(std::make_shared<LineGatherer>());
+    pipeline.push_back(std::make_shared<RectangleDetector>());
+    pipeline.push_back(std::make_shared<BestRectangleSelector>());
+    
+    if (show_detected_lines)
+        pipeline.push_back(std::make_shared<DebugDrawings>());
     
     load_algorithm_models();
 }

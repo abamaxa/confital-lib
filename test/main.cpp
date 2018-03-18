@@ -1,10 +1,5 @@
-//
-//  main.cpp
-//  many-tutor-test
-//
 //  Created by Chris Morgan on 16/1/18.
 //  Copyright © 2018 Chris Morgan. All rights reserved.
-//
 
 #include "detection_results.h"
 #include "detector.h"
@@ -13,6 +8,7 @@
 class Test {
 public :
     Test(bool _save_images) : fails(0), save_images(_save_images) {
+        detector.set_debug_show_detected_lines(true);
         load_images();
         detector.set_model_filepath(TREE_DETECTOR, MODEL_FILE);
     }
@@ -138,7 +134,4 @@ int main(int argc, char** argv)
     
     return 0;
 }
-
-
-
 

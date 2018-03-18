@@ -24,7 +24,7 @@ public:
     const Points& get_points() const;
     void copy_deskewed_document(const cv::Mat& image, cv::Mat& output) const;
 
-    float getScore() const;
+    float get_score() const;
     bool is_valid() const;
 
 private:
@@ -43,19 +43,19 @@ private:
     void calculate_internal_angles();
     bool internal_angles_within_bounds() const;
     
-    void calculateHistogramRatios(const cv::Mat& image);
+    void calculate_histogram_ratios(const cv::Mat& image);
 
     float calculate_ratio(cv::Mat& sat, int num_pixels) const;
     float find_angle(float len_a, float len_b, float len_c) const;
     
     Rectangle rectangle;
     
-    int m_image_width;
-    int m_image_height;
-    float m_dimensions_ratio;
-    float m_image_full_gray_ratio;
-    float m_image_edge_gray_ratio;
-    float m_area_ratio;
+    int image_width;
+    int image_height;
+    float dimensions_ratio;
+    float image_full_gray_ratio;
+    float image_edge_gray_ratio;
+    float area_ratio;
     bool is_probably_doc;
     ORIENTATION orientation;
     float parallel_sides_length_ratio;

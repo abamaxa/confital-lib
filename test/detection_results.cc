@@ -1,13 +1,7 @@
-//
-//  detection_results.cpp
-//  confital-lib-mactest
-//
 //  Created by Chris Morgan on 14/3/18.
 //  Copyright © 2018 Chris Morgan. All rights reserved.
-//
 
 #include "detection_results.h"
-
 
 DetectionResult::DetectionResult(const char* _name, const Points& _points) :
     name(_name), points(_points)

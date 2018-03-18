@@ -5,10 +5,10 @@ Document::Document() {
 }
 
 void Document::reset() {
-    m_dimensions_ratio = 0.0;
-    m_image_full_gray_ratio = 0.0;
-    m_image_edge_gray_ratio = 0.0;
-    m_area_ratio = 0.0;
+    dimensions_ratio = 0.0;
+    image_full_gray_ratio = 0.0;
+    image_edge_gray_ratio = 0.0;
+    area_ratio = 0.0;
     rectangle.reset();
     is_probably_doc = false;
     orientation = UNKNOWN;
@@ -23,8 +23,8 @@ void Document::reset() {
 
 bool Document::assess_document(const Rectangle& rectangle, const cv::Mat& image)
 {
-    m_image_width = image.cols;
-    m_image_height = image.rows;
+    image_width = image.cols;
+    image_height = image.rows;
 
     this->rectangle = rectangle;
     
@@ -47,9 +47,9 @@ bool Document::assess_document(const Rectangle& rectangle, const cv::Mat& image)
     if (!dimensions_within_bounds())
         return false;
     
-    calculateHistogramRatios(image);
-    if (m_image_full_gray_ratio >= MIN_FULL_GRAY_RATIO &&
-        m_image_edge_gray_ratio >= MIN_EDGE_GRAY_RATIO)
+    calculate_histogram_ratios(image);
+    if (image_full_gray_ratio >= MIN_FULL_GRAY_RATIO &&
+        image_edge_gray_ratio >= MIN_EDGE_GRAY_RATIO)
     {
         is_probably_doc = true;
     }
@@ -72,11 +72,11 @@ bool Document::is_valid() const {
 
 void Document::calculate_area_ratio() {
     float area = top_len * left_len;
-    m_area_ratio = (area / (m_image_width * m_image_height));
+    area_ratio = (area / (image_width * image_height));
 }
 
 bool Document::area_is_too_small() const {
-    return (m_area_ratio < MIN_AREA_RATIO);
+    return (area_ratio < MIN_AREA_RATIO);
 }
 
 void Document::determine_orientation() {
@@ -148,15 +148,14 @@ bool Document::internal_angles_within_bounds() const {
     return (count_outside_limit <= 2);
 }
 
-void Document::calculate_dimension_ratio()
-{
+void Document::calculate_dimension_ratio() {
     bool adjustForPerspective = (orientation != UNKNOWN);
     
     float v =  fmax(left_len, right_len);
     float h =  fmax(bottom_len, top_len);
 
-    m_dimensions_ratio = fmin(h, v) / fmax(h, v);
-    m_dimensions_ratio = std::fabs(m_dimensions_ratio - DOCUMENT_ASPECT_RATIO);
+    dimensions_ratio = fmin(h, v) / fmax(h, v);
+    dimensions_ratio = std::fabs(dimensions_ratio - DOCUMENT_ASPECT_RATIO);
     
     if (!dimensions_within_bounds()) {
         if (adjustForPerspective) {
@@ -171,17 +170,17 @@ void Document::calculate_dimension_ratio()
                 h = h + (h * hratio);
             }
             
-            m_dimensions_ratio = fmin(h, v) / fmax(h, v);
-            m_dimensions_ratio = std::fabs(m_dimensions_ratio - DOCUMENT_ASPECT_RATIO);
+            dimensions_ratio = fmin(h, v) / fmax(h, v);
+            dimensions_ratio = std::fabs(dimensions_ratio - DOCUMENT_ASPECT_RATIO);
         }
     }
 }
 
 bool Document::dimensions_within_bounds() const {
-    return (m_dimensions_ratio < DIMENSION_RATIO_MARGIN);
+    return (dimensions_ratio < DIMENSION_RATIO_MARGIN);
 }
 
-void Document::calculateHistogramRatios(const cv::Mat& image) {
+void Document::calculate_histogram_ratios(const cv::Mat& image) {
     cv::Mat subimg, mask, hsv_img, histogram;
     int channels[] = {1};
     int histSize[] = {NUM_HISTOGRAM_BINS};
@@ -208,10 +207,10 @@ void Document::calculateHistogramRatios(const cv::Mat& image) {
 
     cv::Scalar totals = cv::sum(histogram);
 
-    m_image_edge_gray_ratio = calculate_ratio(histogram, totals[0]);
+    image_edge_gray_ratio = calculate_ratio(histogram, totals[0]);
 
     cv::calcHist(&hsv_img, 1, channels, cv::Mat(), histogram, 1, histSize, ranges);
-    m_image_full_gray_ratio = calculate_ratio(histogram, hsv_img.cols * hsv_img.rows);
+    image_full_gray_ratio = calculate_ratio(histogram, hsv_img.cols * hsv_img.rows);
 }
 
 float Document::calculate_ratio(cv::Mat& sat, int num_pixels) const {
@@ -227,8 +226,8 @@ float Document::find_angle(float len_a, float len_b, float len_c) const {
 void Document::rescale(const cv::Mat& image) {
     rectangle.rescale(image);
 
-    m_image_width = image.cols;
-    m_image_height = image.rows;
+    image_width = image.cols;
+    image_height = image.rows;
 }
 
 void Document::copy_deskewed_document(const cv::Mat& image, cv::Mat& output) const
@@ -277,8 +276,8 @@ void Document::draw(cv::Mat& image, const cv::Scalar& color) const {
     rectangle.draw(image, color);
 }
 
-float Document::getScore() const {
-    return (m_image_full_gray_ratio * m_image_edge_gray_ratio * m_image_edge_gray_ratio);
+float Document::get_score() const {
+    return (image_full_gray_ratio * image_edge_gray_ratio * image_edge_gray_ratio);
     //return (1. - m_dimensions_ratio);
 }
 
