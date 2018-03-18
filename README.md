@@ -1,5 +1,5 @@
 # Confital-Lib
----
+
 Confital-Lib is an open source software library for detecting documents in an image and is particularly suited to working with video streams.
 
 The library provides methods for analyzing an image and returning the pixel coordinates of any document detected within the image. The library also provides a function to extract a deskewed image of the detected document from the original image.
@@ -9,8 +9,6 @@ The library expects the document to be the dominant feature of the image.
 The library is implemented with OpenCV version 3 and is intended primarily for use on mobile devices and embedded systems. It is written in C++ and also provides a Python interface. To date, the code has been compiled and tested with OpenCV version 3.4 on Android 5.x-7.x, iOS 10.x-11.x, MacOS 10.13 and Ubuntu Linux 17.10.
 
 ## Installation on MacOS
-
-----
 
 In order to build the library, you will need to install OpenCV 3 first, including the contrib modules. The easiest way to do this is from the terminal using [brew](https://brew.sh/).
 
@@ -38,7 +36,7 @@ $ python setup.py install
 ```
 
 ## Python Usage
-----
+
 The library is accessed through a class called Detector which provides methods to detect a document and return the pixel coordinates of the document, if one was detected. For example the following python code will
 
 * open an image called test.png;
@@ -93,8 +91,6 @@ The result should look like this:
 
 
 ## C++ Usage
----
-
 
 The C++ interface provides greater flexibility than the python interface. In particular, it is possible to modify or extend the detection pipeline by implementing new classes that implement the library's AbstractAlgorithm interface (see src/algorithm/abstract_algorithm.h").
 
@@ -126,7 +122,7 @@ void captureDetectedDocument(cv::Mat &image_containing_document) {
 The code has been tested on Android and iOS. I intend to release sample apps to illustrate using the library on these platforms. In the meantime, here are some tips on building and using the code on iOS and Android.
 
 ## iOS
-----
+
 It is relatively straight to compile and use the code on iOS. For me, the two main issues are obtaining/building OpenCV and wrapping the C++ code so it can be called from Swift/Objective-C.
 
 As far as I know, there is no suitable prebuilt version of the iOS opencv framework available on the net. I have one which I am willing to share but it's quite large which is why I haven't uploaded it to github - my account has a 100mb file size limit. So, just contact me if you would like me to upload it to your dropbox etc.
@@ -151,7 +147,7 @@ In order to be able to call the code from Swift/Objective-C you need to create a
 I also recommend looking at the OpenCV iOS examples.
 
 ## Android
-----
+
 You will need to write a JNI wrapper in order to use the library on Android. Once you have done that, make sure your Android.mk file contains the following settings:
 
 ```shell
