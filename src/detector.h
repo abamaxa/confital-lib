@@ -26,11 +26,11 @@ public:
     void set_debug_show_detected_lines(bool show);
     virtual void set_model_filepath(std::string model_name, std::string path);
     virtual void add_pipeline_stage(Algorithm algorithm);
-    virtual void process_image(cv::Mat& original_image);
+    virtual void detect(cv::Mat& original_image);
     virtual bool found_document() const;
     virtual void copy_deskewed_doc_region(cv::Mat& src_image, cv::Mat& dest_image);
     virtual void get_document_points(Points& points) const;
-    virtual void draw_most_recent_detected_document(cv::Mat& original_image) const;
+    virtual void highlight_most_recent_detected_document(cv::Mat& original_image) const;
     virtual void reset();
     
 protected:

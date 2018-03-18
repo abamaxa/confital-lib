@@ -57,7 +57,7 @@ void Detector::set_model_filepath(std::string model_name, std::string path) {
     model_paths.insert({model_name, path});
 }
 
-void Detector::process_image(cv::Mat& original_image) {
+void Detector::detect(cv::Mat& original_image) {
     calculate_rescale_factor(original_image);
     scale_image(original_image);
     
@@ -72,7 +72,6 @@ void Detector::process_image(cv::Mat& original_image) {
 
     update_detection_state(job.get_result());
     update_last_detected_document(original_image);
-    draw_most_recent_detected_document(original_image);
 }
 
 void Detector::calculate_rescale_factor(cv::Mat& original_image) {
@@ -107,7 +106,7 @@ void Detector::update_last_detected_document(cv::Mat& original_image) {
     }
 }
 
-void Detector::draw_most_recent_detected_document(cv::Mat& original_image) const {
+void Detector::highlight_most_recent_detected_document(cv::Mat& original_image) const {
     if (found_document())
         most_recent_detected_document.draw(original_image, cv::Scalar(0,255,0,255));
 }

@@ -75,8 +75,9 @@ cdef object Mat2np(Mat m):
 cdef extern from "detector.h" :
     cdef cppclass Detector:
         Detector() except +
-        void process_image(Mat&)
+        void detect(Mat&)
         bool found_document() const
+        void highlight_most_recent_detected_document(Mat&) const
         bool copy_deskewed_doc_region(Mat&, Mat&)
         void get_document_points(vector[Point]&) const
         void reset()
@@ -86,10 +87,12 @@ cdef class PyDetector:
     def __cinit__(self):
         self.c_detector = Detector()
         
-    def process_image(self, image):
+    def detect(self, image):
         cdef Mat m
         ary2cvMat(np.array(image), m)
-        self.c_detector.process_image(m)
+        self.c_detector.reset();
+        self.c_detector.detect(m)
+        self.c_detector.highlight_most_recent_detected_document(m)
         return Image.fromarray(Mat2np(m).astype('uint8'))
         
     def found_document(self) :
@@ -117,6 +120,3 @@ cdef class PyDetector:
             py_points.append((point.x, point.y))
             
         return py_points
-    
-    def reset(self) :
-         self.c_detector.reset()

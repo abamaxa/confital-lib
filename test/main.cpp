@@ -27,7 +27,8 @@ public :
         cv::Mat test_image;
         images[ordinal].copyTo(test_image);
         
-        detector.process_image(test_image);
+        detector.detect(test_image);
+        detector.highlight_most_recent_detected_document(test_image);
         
         check_detection(ordinal);
         
