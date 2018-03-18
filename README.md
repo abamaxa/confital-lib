@@ -69,7 +69,7 @@ The result should be this:
 </tr>
 <tr>
 <td>
-  <img src="https://raw.githubusercontent.com/abamaxa/confital-lib/master/python/test.jpg" width="400px", height="600px">
+  <img src="https://github.com/abamaxa/confital-lib/blob/master/python/test.jpg?raw=true" width="400px", height="600px">
 </td>
 <td>
   <img src="https://raw.githubusercontent.com/abamaxa/confital-lib/master/python/detected-document.jpg" width="400px", height="600px">
