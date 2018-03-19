@@ -8,8 +8,6 @@
 #ifndef MTConfig_h
 #define MTConfig_h
 
-//const float MIN_FULL_GRAY_RATIO = 0.33;
-//const float MIN_EDGE_GRAY_RATIO = 0.60;
 const float MIN_FULL_GRAY_RATIO = 0.80;
 const float MIN_EDGE_GRAY_RATIO = 0.85;
 const float MIN_AREA_RATIO = 0.15;

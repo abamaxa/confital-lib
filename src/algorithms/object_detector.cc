@@ -3,7 +3,7 @@
 //
 
 #include "object_detector.h"
-
+#if COMPILE_DNN_DETECTION
 cv::dnn::Net ObjectDetector::net;
 std::string model = "";
 
@@ -110,3 +110,6 @@ void ObjectDetector::apply(PipelineJob& job) {
                     cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 0, 0), 1);
     }
 }
+
+#endif
+

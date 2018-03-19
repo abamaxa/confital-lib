@@ -12,6 +12,13 @@ typedef cv::Ptr<cv::ximgproc::StructuredEdgeDetection> StructuredEdgeDetection;
 const char* const TREE_DETECTOR = "Tree Edge Detector";
 const char* const CANNY_DETECTOR = "Canny Edge Detector";
 
+class CannyEdgeDetector : public AbstractAlgorithm {
+public:
+    virtual void apply(PipelineJob& job);
+    virtual const char* get_name() { return CANNY_DETECTOR; }
+};
+
+#if COMPILE_TREE_DETECTION
 class TreesEdgeDetector : public AbstractAlgorithm {
 public:
     TreesEdgeDetector();
@@ -23,11 +30,6 @@ public:
 private:
     StructuredEdgeDetection edge_detector;
 };
-
-class CannyEdgeDetector : public AbstractAlgorithm {
-public:
-    virtual void apply(PipelineJob& job);
-    virtual const char* get_name() { return CANNY_DETECTOR; }
-};
+#endif
 
 #endif /* edge_detector_hpp */

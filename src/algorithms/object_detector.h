@@ -6,6 +6,8 @@
 #define object_detector_hpp
 
 #include "common.h"
+
+#if COMPILE_DNN_DETECTION
 #include <opencv2/dnn.hpp>
 #include <opencv2/core_detect.hpp>
 
@@ -21,5 +23,5 @@ private :
     static cv::dnn::Net net;
 };
 
-
+#endif
 #endif /* object_detector_hpp */

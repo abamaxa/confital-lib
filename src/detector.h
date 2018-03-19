@@ -10,11 +10,6 @@
 #include "document.h"
 #include "algorithms/algorithms.h"
 
-enum EDGE_DETECTORS {
-    MT_EDGE_DETECT_CANNY,
-    MT_EDGE_DETECT_TREES
-};
-
 typedef std::shared_ptr<AbstractAlgorithm> Algorithm;
 typedef std::vector<std::shared_ptr<AbstractAlgorithm>> AlgorithmPipeline;
 

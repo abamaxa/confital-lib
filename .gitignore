@@ -41,3 +41,5 @@ data/images_saved/
 mac/confital-lib-mactest/confital-lib-mactest.build/
 mac/confital-lib-mactest/confital-lib-mactest.xcodeproj/xcuserdata/chris.xcuserdatad/xcschemes/
 python/
+
+opencv2.framework

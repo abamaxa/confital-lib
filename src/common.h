@@ -4,12 +4,18 @@
 #ifndef Common_h
 #define Common_h
 
+#ifdef __cplusplus
+
+#define COMPILE_DNN_DETECTION  0
+#define COMPILE_TREE_DETECTION 0
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #import <opencv2/opencv.hpp>
 #import <opencv2/ximgproc.hpp>
 #import <opencv2/highgui.hpp>
 #pragma clang diagnostic pop
+#endif
 
 #import <cmath>
 #import <algorithm>

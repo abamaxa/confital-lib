@@ -17,6 +17,7 @@ void CannyEdgeDetector::apply(PipelineJob& job) {
     cv::Canny(image_gray, image, 75, 200);
 }
 
+#if COMPILE_TREE_DETECTION
 TreesEdgeDetector::TreesEdgeDetector() {
     
 }
@@ -57,3 +58,4 @@ bool TreesEdgeDetector::load(std::string path_to_model) {
     return (edge_detector != nullptr);
 }
 
+#endif
